@@ -1,0 +1,172 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "easy-restaurant-menu/restaurant-menu",
+  "version": "1.0.0",
+  "title": "Menu Ristorante",
+  "category": "widgets",
+  "icon": "food",
+  "description": "Blocco per visualizzare il menu del ristorante con varie opzioni di personalizzazione",
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "color": {
+      "background": true,
+      "text": true,
+      "link": true,
+      "gradients": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "fontWeight": true,
+      "fontStyle": true,
+      "fontFamily": true
+    }
+  },
+  "attributes": {
+    "section_id": {
+      "type": "string",
+      "default": ""
+    },
+    "displayType": {
+      "type": "string",
+      "default": "grid"
+    },
+    "columns": {
+      "type": "number",
+      "default": 2
+    },
+    "showImages": {
+      "type": "boolean",
+      "default": true
+    },
+    "showPrices": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDescriptions": {
+      "type": "boolean",
+      "default": true
+    },
+    "imageSizeGrid": {
+      "type": "number",
+      "default": 200
+    },
+    "imageSizeList": {
+      "type": "number",
+      "default": 90
+    },
+    "imageSquare": {
+      "type": "boolean",
+      "default": true
+    },
+    "imageSize": {
+      "type": "number",
+      "default": 100
+    },
+    "imageMargin": {
+      "type": "object",
+      "default": {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
+    },
+    "imagePadding": {
+      "type": "object",
+      "default": {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
+    },
+    "titleMargin": {
+      "type": "object",
+      "default": {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
+    },
+    "priceMargin": {
+      "type": "object",
+      "default": {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
+    },
+    "descriptionMargin": {
+      "type": "object",
+      "default": {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
+    },
+    "contentPadding": {
+      "type": "object",
+      "default": {
+        "top": 15,
+        "right": 15,
+        "bottom": 15,
+        "left": 15
+      }
+    },
+    "priceColor": {
+      "type": "string",
+      "default": ""
+    },
+    "titleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "descriptionColor": {
+      "type": "string",
+      "default": ""
+    },
+    "backgroundColor": {
+      "type": "string",
+      "default": ""
+    },
+    "itemSpacing": {
+      "type": "number",
+      "default": 20
+    },
+    "borderRadius": {
+      "type": "number",
+      "default": 0
+    },
+    "borderWidth": {
+      "type": "number",
+      "default": 0
+    },
+    "borderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "boxShadow": {
+      "type": "boolean",
+      "default": false
+    },
+    "hoverEffect": {
+      "type": "string",
+      "default": "none"
+    }
+  },
+  "textdomain": "easy-restaurant-menu",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.scss",
+  "style": "file:./style.scss",
+  "render": "file:./render.php"
+} 

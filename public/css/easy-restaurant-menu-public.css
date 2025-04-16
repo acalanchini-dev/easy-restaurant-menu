@@ -1,0 +1,230 @@
+/**
+ * Stili CSS per il frontend del plugin
+ *
+ * @since      1.0.0
+ * @package    Easy_Restaurant_Menu
+ */
+
+/* Container principale */
+.easy-restaurant-menu {
+    margin: 30px 0;
+    font-family: inherit;
+}
+
+.easy-restaurant-menu * {
+    box-sizing: border-box;
+}
+
+/* Sezioni */
+.erm-section {
+    margin-bottom: 40px;
+}
+
+.erm-section-header {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.erm-section-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+}
+
+.erm-section-description {
+    color: #666;
+    margin: 0;
+}
+
+/* Layout Lista (default) */
+.erm-menu-list .erm-item {
+    display: flex;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.erm-menu-list .erm-item:last-child {
+    border-bottom: none;
+}
+
+.erm-menu-list .erm-item-image {
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+    flex-shrink: 0;
+    background: #f5f5f5;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.erm-menu-list .erm-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.erm-menu-list .erm-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.erm-menu-list .erm-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.erm-menu-list .erm-item-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+    padding-right: 10px;
+}
+
+.erm-menu-list .erm-item-price {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.erm-menu-list .erm-item-description {
+    color: #666;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Layout Griglia */
+.erm-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-gap: 25px;
+}
+
+.erm-menu-grid .erm-item {
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.erm-menu-grid .erm-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.erm-menu-grid .erm-item-image {
+    width: 100%;
+    height: 180px;
+    background: #f5f5f5;
+    overflow: hidden;
+}
+
+.erm-menu-grid .erm-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.erm-menu-grid .erm-item-content {
+    padding: 15px;
+}
+
+.erm-menu-grid .erm-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.erm-menu-grid .erm-item-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+    padding-right: 10px;
+}
+
+.erm-menu-grid .erm-item-price {
+    font-weight: bold;
+}
+
+.erm-menu-grid .erm-item-description {
+    color: #666;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Layout Compatto */
+.erm-menu-compact .erm-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dotted rgba(0, 0, 0, 0.1);
+}
+
+.erm-menu-compact .erm-item:last-child {
+    border-bottom: none;
+}
+
+.erm-menu-compact .erm-item-image {
+    display: none;
+}
+
+.erm-menu-compact .erm-item-title {
+    font-weight: bold;
+    margin: 0;
+}
+
+.erm-menu-compact .erm-item-description {
+    display: none;
+}
+
+.erm-menu-compact .erm-item-price {
+    font-weight: bold;
+    margin-left: 15px;
+}
+
+/* Personalizzazioni e utility */
+.erm-menu-no-items {
+    text-align: center;
+    padding: 30px;
+    background: #f9f9f9;
+    border-radius: 4px;
+    color: #666;
+}
+
+.erm-menu-section-separator {
+    height: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    margin: 40px 0;
+}
+
+/* Reattivo */
+@media screen and (max-width: 767px) {
+    .erm-menu-list .erm-item {
+        flex-direction: column;
+    }
+    
+    .erm-menu-list .erm-item-image {
+        width: 100%;
+        height: 180px;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    
+    .erm-menu-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .erm-section-title {
+        font-size: 24px;
+    }
+}

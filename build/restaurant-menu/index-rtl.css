@@ -1,0 +1,48 @@
+/*!********************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/restaurant-menu/editor.scss ***!
+  \********************************************************************************************************************************************************************************************************************************************************/
+/**
+ * Stili per l'editor del blocco Restaurant Menu
+ * Versione professionale aggiornata
+ */
+.wp-block-easy-restaurant-menu-restaurant-menu {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .block-editor-inspector-controls .components-panel__body .components-base-control {
+  margin-bottom: 18px;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .block-editor-inspector-controls .components-panel__body .components-color-palette {
+  padding-bottom: 12px;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .block-editor-inspector-controls .components-panel__body .components-base-control__label {
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #2c3e50;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .block-editor-inspector-controls .components-panel__body .components-toggle-control .components-base-control__field {
+  margin-bottom: 8px;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .block-editor-inspector-controls .components-panel__body .components-panel__body-title .components-button {
+  color: #2c3e50;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .block-editor-inspector-controls .components-panel__body .components-panel__body-title .components-button:hover {
+  color: #e74c3c;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .erm-block-preview {
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 25px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .erm-block-preview p {
+  text-align: center;
+  margin: 0;
+  padding: 30px;
+  font-style: italic;
+  color: #777;
+  font-size: 15px;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu.is-selected .erm-block-preview, .wp-block-easy-restaurant-menu-restaurant-menu.has-child-selected .erm-block-preview {
+  border-color: #e74c3c;
+}

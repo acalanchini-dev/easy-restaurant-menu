@@ -1,0 +1,197 @@
+/**
+ * Stili CSS per l'editor Gutenberg
+ *
+ * @since      1.0.0
+ * @package    Easy_Restaurant_Menu
+ */
+
+/* Regole di base per il blocco Restaurant Menu nell'editor */
+.wp-block-easy-restaurant-menu-restaurant-menu {
+    padding: 20px;
+    border: 1px dashed #ccc;
+    background-color: #fbfbfb;
+}
+
+.erm-editor-placeholder {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.erm-editor-placeholder-icon {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.erm-editor-placeholder-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.erm-editor-placeholder-description {
+    color: #777;
+    font-size: 0.9em;
+}
+
+/* Pannello dei controlli laterale */
+.erm-inspector-controls .components-panel__body {
+    border-top: 1px solid #e2e4e7;
+}
+
+.erm-inspector-controls .components-base-control {
+    margin-bottom: 16px;
+}
+
+.erm-inspector-controls .components-base-control__label {
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Controlli colore */
+.erm-color-control .components-color-palette {
+    margin-top: 8px;
+}
+
+.erm-color-control .components-color-palette__custom-color {
+    height: 30px;
+    width: 30px;
+}
+
+/* Controlli tipografia */
+.erm-typography-control .components-base-control {
+    margin-bottom: 12px;
+}
+
+.erm-typography-control .components-range-control {
+    margin-top: 8px;
+}
+
+/* Preview del menu nell'editor */
+.erm-editor-preview {
+    margin-top: 15px;
+}
+
+.erm-editor-section {
+    margin-bottom: 30px;
+}
+
+.erm-editor-section-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+}
+
+.erm-editor-section-title {
+    margin: 0;
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
+.erm-editor-section-description {
+    margin-top: 5px;
+    color: #666;
+}
+
+.erm-editor-item {
+    display: flex;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.erm-editor-item:last-child {
+    border-bottom: none;
+}
+
+.erm-editor-item-image {
+    width: 70px;
+    height: 70px;
+    margin-right: 15px;
+    flex-shrink: 0;
+    background: #f0f0f0;
+    overflow: hidden;
+    border-radius: 4px;
+    position: relative;
+}
+
+.erm-editor-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.erm-editor-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.erm-editor-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 5px;
+}
+
+.erm-editor-item-title {
+    margin: 0;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.erm-editor-item-price {
+    margin-left: 10px;
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+.erm-editor-item-description {
+    margin: 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* Stili per il layout a griglia nell'editor */
+.erm-editor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-gap: 20px;
+}
+
+.erm-editor-grid .erm-editor-item {
+    flex-direction: column;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 0;
+    height: 100%;
+}
+
+.erm-editor-grid .erm-editor-item-image {
+    width: 100%;
+    height: 150px;
+    margin-right: 0;
+    margin-bottom: 15px;
+}
+
+/* Stili per il layout compatto nell'editor */
+.erm-editor-compact .erm-editor-item {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.erm-editor-compact .erm-editor-item-image {
+    width: 50px;
+    height: 50px;
+}
+
+.erm-editor-compact .erm-editor-item-description {
+    display: none;
+}
+
+/* Messaggio di nessun elemento */
+.erm-editor-no-items {
+    padding: 20px;
+    text-align: center;
+    background: #f0f0f0;
+    border-radius: 4px;
+}

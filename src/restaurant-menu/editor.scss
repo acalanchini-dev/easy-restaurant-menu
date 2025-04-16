@@ -1,0 +1,78 @@
+/**
+ * Stili per l'editor del blocco Restaurant Menu
+ * Versione professionale aggiornata
+ */
+
+// Variabili (devono corrispondere a quelle in style.scss)
+$primary-color: #2c3e50;
+$accent-color: #e74c3c;
+$text-color: #333;
+$text-light: #777;
+$border-color: #e5e5e5;
+$background-light: #f9f9f9;
+$shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+$border-radius: 6px;
+
+.wp-block-easy-restaurant-menu-restaurant-menu {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    
+    // Personalizzazione dell'interfaccia dell'editor
+    .block-editor-inspector-controls {
+        .components-panel__body {
+            .components-base-control {
+                margin-bottom: 18px;
+            }
+            
+            .components-color-palette {
+                padding-bottom: 12px;
+            }
+            
+            // Miglioramento stile etichette
+            .components-base-control__label {
+                font-weight: 500;
+                margin-bottom: 6px;
+                color: $primary-color;
+            }
+            
+            // Miglioramento bottoni e controlli
+            .components-toggle-control .components-base-control__field {
+                margin-bottom: 8px;
+            }
+            
+            .components-panel__body-title {
+                .components-button {
+                    color: $primary-color;
+                    
+                    &:hover {
+                        color: $accent-color;
+                    }
+                }
+            }
+        }
+    }
+    
+    // Preview del blocco nell'editor
+    .erm-block-preview {
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        padding: 25px;
+        background-color: $background-light;
+        box-shadow: $shadow-light;
+        
+        p {
+            text-align: center;
+            margin: 0;
+            padding: 30px;
+            font-style: italic;
+            color: $text-light;
+            font-size: 15px;
+        }
+    }
+    
+    // Selettore blocco nell'editor
+    &.is-selected, &.has-child-selected {
+        .erm-block-preview {
+            border-color: $accent-color;
+        }
+    }
+} 
