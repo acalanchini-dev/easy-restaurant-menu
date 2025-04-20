@@ -107,7 +107,29 @@ class Easy_Restaurant_Menu_Public_Render {
      * @return   string                  HTML renderizzato.
      */
     public function render_restaurant_menu_block($attributes, $content, $block) {
-        // Carica gli script e i CSS necessari se le funzioni esistono
+        // Carica la classe Cache se non lo è già
+        if (!class_exists('EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Cache')) {
+            if (function_exists('EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Helper::using')) {
+                EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Helper::using('inc/class-easy-restaurant-menu-cache.php');
+            } else {
+                // Fallback se la funzione di utilità non è disponibile
+                include_once dirname(dirname(__FILE__)) . '/inc/class-easy-restaurant-menu-cache.php';
+            }
+        }
+        
+        // Crea una chiave di cache basata sugli attributi
+        $cache_key = 'render';
+        
+        // Controlla se i dati sono in cache
+        $html_output = EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Cache::get($cache_key, $attributes);
+        
+        if ($html_output !== false) {
+            return $html_output;
+        }
+        
+        // Se non è in cache, procedi con il rendering
+        
+        // Carica gli script e i CSS necessari
         if (function_exists('wp_enqueue_style')) {
             wp_enqueue_style('easy-restaurant-menu-public');
         }
@@ -135,8 +157,13 @@ class Easy_Restaurant_Menu_Public_Render {
             include dirname(dirname(__FILE__)) . '/public/partials/restaurant-menu-render.php';
         }
         
-        // Restituisci l'output buffered
-        return ob_get_clean();
+        // Ottieni l'output buffered
+        $html_output = ob_get_clean();
+        
+        // Salva nella cache
+        EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Cache::set($cache_key, $html_output, $attributes);
+        
+        return $html_output;
     }
 
     /**

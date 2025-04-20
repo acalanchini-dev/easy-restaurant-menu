@@ -14,14 +14,38 @@ global $wpdb;
 
 // Ottieni l'ID della sezione corrente (se specificato)
 $current_section_id = isset($_GET['section']) ? intval($_GET['section']) : 0;
+$current_menu_id = isset($_GET['menu']) ? intval($_GET['menu']) : 0;
 
-// Recupera tutte le sezioni
+// Recupera tutti i menu
+$table_menus = $wpdb->prefix . 'erm_menus';
+$menus = $wpdb->get_results("SELECT * FROM $table_menus WHERE status = 'publish' ORDER BY ordine ASC", ARRAY_A);
+
+// Se c'è almeno un menu e non è stato specificato un menu corrente, usa il primo
+if (empty($current_menu_id) && !empty($menus)) {
+    $current_menu_id = $menus[0]['id'];
+}
+
+// Recupera tutte le sezioni del menu selezionato
 $table_sections = $wpdb->prefix . 'erm_sections';
-$sections = $wpdb->get_results("SELECT * FROM $table_sections WHERE status = 'publish' ORDER BY ordine ASC", ARRAY_A);
+$sections = [];
+$current_menu = null;
 
-// Se c'è almeno una sezione e non è stata specificata una sezione corrente, usa la prima
-if (empty($current_section_id) && !empty($sections)) {
-    $current_section_id = $sections[0]['id'];
+if ($current_menu_id > 0) {
+    $sections = $wpdb->get_results(
+        $wpdb->prepare("SELECT * FROM $table_sections WHERE menu_id = %d AND status = 'publish' ORDER BY ordine ASC", $current_menu_id),
+        ARRAY_A
+    );
+    
+    // Recupera i dettagli del menu corrente
+    $current_menu = $wpdb->get_row(
+        $wpdb->prepare("SELECT * FROM $table_menus WHERE id = %d", $current_menu_id),
+        ARRAY_A
+    );
+    
+    // Se c'è almeno una sezione e non è stata specificata una sezione corrente, usa la prima
+    if (empty($current_section_id) && !empty($sections)) {
+        $current_section_id = $sections[0]['id'];
+    }
 }
 
 // Recupera gli elementi della sezione corrente
@@ -52,163 +76,196 @@ if ($current_section_id > 0) {
     
     <hr class="wp-header-end">
     
-    <?php if (empty($sections)) : ?>
+    <?php if (empty($menus)) : ?>
         <div class="notice notice-warning">
             <p>
-                <?php echo esc_html__('Non ci sono sezioni disponibili. ', 'easy-restaurant-menu'); ?>
-                <a href="<?php echo esc_url(admin_url('admin.php?page=erm-sections')); ?>"><?php echo esc_html__('Crea una sezione', 'easy-restaurant-menu'); ?></a> 
-                <?php echo esc_html__('prima di aggiungere elementi al menu.', 'easy-restaurant-menu'); ?>
+                <?php echo esc_html__('Non ci sono menu disponibili. ', 'easy-restaurant-menu'); ?>
+                <a href="<?php echo esc_url(admin_url('admin.php?page=erm-menus')); ?>"><?php echo esc_html__('Crea un menu', 'easy-restaurant-menu'); ?></a> 
+                <?php echo esc_html__('prima di aggiungere elementi.', 'easy-restaurant-menu'); ?>
             </p>
         </div>
     <?php else : ?>
-        <div class="erm-sections-tabs">
+        <!-- Selezione del menu -->
+        <div class="erm-menus-tabs">
+            <h2 class="screen-reader-text"><?php echo esc_html__('Filtro per menu', 'easy-restaurant-menu'); ?></h2>
             <ul class="subsubsub">
                 <?php 
-                $total_sections = count($sections);
-                foreach ($sections as $index => $section) : 
-                    $is_current = ($section['id'] == $current_section_id);
-                    $separator = ($index < $total_sections - 1) ? ' | ' : '';
+                $total_menus = count($menus);
+                foreach ($menus as $index => $menu) : 
+                    $is_current = ($menu['id'] == $current_menu_id);
+                    $separator = ($index < $total_menus - 1) ? ' | ' : '';
                 ?>
                     <li>
-                        <a href="<?php echo esc_url(admin_url('admin.php?page=erm-items&section=' . $section['id'])); ?>" class="<?php echo $is_current ? 'current' : ''; ?>">
-                            <?php echo esc_html($section['nome']); ?>
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=erm-items&menu=' . $menu['id'])); ?>" class="<?php echo $is_current ? 'current' : ''; ?>">
+                            <?php echo esc_html($menu['nome']); ?>
                         </a><?php echo esc_html($separator); ?>
                     </li>
                 <?php endforeach; ?>
             </ul>
         </div>
-
-        <?php if ($current_section_id > 0) : ?>
-            <div class="notice notice-info is-dismissible">
+        
+        <?php if (empty($sections)) : ?>
+            <div class="notice notice-warning">
                 <p>
-                    <?php 
-                    echo sprintf(
-                        esc_html__('Stai visualizzando gli elementi della sezione "%s". Trascina gli elementi per riordinare. Clicca su un elemento per modificarlo.', 'easy-restaurant-menu'),
-                        esc_html($current_section['nome'])
-                    ); 
-                    ?>
+                    <?php echo esc_html__('Non ci sono sezioni disponibili in questo menu. ', 'easy-restaurant-menu'); ?>
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=erm-sections&menu=' . $current_menu_id)); ?>"><?php echo esc_html__('Crea una sezione', 'easy-restaurant-menu'); ?></a> 
+                    <?php echo esc_html__('prima di aggiungere elementi al menu.', 'easy-restaurant-menu'); ?>
                 </p>
             </div>
-            
-            <div class="erm-form-container" style="display: none;">
-                <div class="erm-form-header">
-                    <h2 id="erm-form-title"><?php echo esc_html__('Aggiungi Nuovo Elemento', 'easy-restaurant-menu'); ?></h2>
-                    <button type="button" class="erm-close-form">&times;</button>
+        <?php else : ?>
+            <!-- Selezione della sezione all'interno del menu -->
+            <div class="erm-sections-tabs">
+                <h2 class="screen-reader-text"><?php echo esc_html__('Filtro per sezione', 'easy-restaurant-menu'); ?></h2>
+                <ul class="subsubsub">
+                    <?php 
+                    $total_sections = count($sections);
+                    foreach ($sections as $index => $section) : 
+                        $is_current = ($section['id'] == $current_section_id);
+                        $separator = ($index < $total_sections - 1) ? ' | ' : '';
+                    ?>
+                        <li>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=erm-items&menu=' . $current_menu_id . '&section=' . $section['id'])); ?>" class="<?php echo $is_current ? 'current' : ''; ?>">
+                                <?php echo esc_html($section['nome']); ?>
+                            </a><?php echo esc_html($separator); ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+
+            <?php if ($current_section_id > 0) : ?>
+                <div class="notice notice-info is-dismissible">
+                    <p>
+                        <?php 
+                        echo sprintf(
+                            esc_html__('Stai visualizzando gli elementi della sezione "%s" del menu "%s". Trascina gli elementi per riordinare. Clicca su un elemento per modificarlo.', 'easy-restaurant-menu'),
+                            esc_html($current_section['nome']),
+                            esc_html($current_menu['nome'])
+                        ); 
+                        ?>
+                    </p>
                 </div>
                 
-                <form id="erm-item-form">
-                    <input type="hidden" id="erm-item-id" name="id" value="0">
-                    <input type="hidden" id="erm-item-section-id" name="section_id" value="<?php echo esc_attr($current_section_id); ?>">
-                    
-                    <div class="erm-form-group">
-                        <label for="erm-item-titolo"><?php echo esc_html__('Nome Elemento', 'easy-restaurant-menu'); ?></label>
-                        <input type="text" id="erm-item-titolo" name="titolo" required>
+                <div class="erm-form-container" style="display: none;">
+                    <div class="erm-form-header">
+                        <h2 id="erm-form-title"><?php echo esc_html__('Aggiungi Nuovo Elemento', 'easy-restaurant-menu'); ?></h2>
+                        <button type="button" class="erm-close-form">&times;</button>
                     </div>
                     
-                    <div class="erm-form-group">
-                        <label for="erm-item-descrizione"><?php echo esc_html__('Descrizione', 'easy-restaurant-menu'); ?></label>
-                        <textarea id="erm-item-descrizione" name="descrizione" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="erm-form-row">
+                    <form id="erm-item-form">
+                        <input type="hidden" id="erm-item-id" name="id" value="0">
+                        <input type="hidden" id="erm-item-section-id" name="section_id" value="<?php echo esc_attr($current_section_id); ?>">
+                        <input type="hidden" id="erm-item-menu-id" name="menu_id" value="<?php echo esc_attr($current_menu_id); ?>">
+                        
                         <div class="erm-form-group">
-                            <label for="erm-item-prezzo"><?php echo esc_html__('Prezzo', 'easy-restaurant-menu'); ?></label>
-                            <input type="number" id="erm-item-prezzo" name="prezzo" min="0" step="0.01" value="0">
+                            <label for="erm-item-titolo"><?php echo esc_html__('Nome Elemento', 'easy-restaurant-menu'); ?></label>
+                            <input type="text" id="erm-item-titolo" name="titolo" required>
                         </div>
                         
                         <div class="erm-form-group">
-                            <label for="erm-item-ordine"><?php echo esc_html__('Ordine', 'easy-restaurant-menu'); ?></label>
-                            <input type="number" id="erm-item-ordine" name="ordine" min="0" step="1" value="0">
+                            <label for="erm-item-descrizione"><?php echo esc_html__('Descrizione', 'easy-restaurant-menu'); ?></label>
+                            <textarea id="erm-item-descrizione" name="descrizione" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="erm-form-row">
+                            <div class="erm-form-group">
+                                <label for="erm-item-prezzo"><?php echo esc_html__('Prezzo', 'easy-restaurant-menu'); ?></label>
+                                <input type="number" id="erm-item-prezzo" name="prezzo" min="0" step="0.01" value="0">
+                            </div>
+                            
+                            <div class="erm-form-group">
+                                <label for="erm-item-ordine"><?php echo esc_html__('Ordine', 'easy-restaurant-menu'); ?></label>
+                                <input type="number" id="erm-item-ordine" name="ordine" min="0" step="1" value="0">
+                            </div>
+                            
+                            <div class="erm-form-group">
+                                <label for="erm-item-status"><?php echo esc_html__('Stato', 'easy-restaurant-menu'); ?></label>
+                                <select id="erm-item-status" name="status">
+                                    <option value="publish"><?php echo esc_html__('Pubblicato', 'easy-restaurant-menu'); ?></option>
+                                    <option value="draft"><?php echo esc_html__('Bozza', 'easy-restaurant-menu'); ?></option>
+                                </select>
+                            </div>
                         </div>
                         
                         <div class="erm-form-group">
-                            <label for="erm-item-status"><?php echo esc_html__('Stato', 'easy-restaurant-menu'); ?></label>
-                            <select id="erm-item-status" name="status">
-                                <option value="publish"><?php echo esc_html__('Pubblicato', 'easy-restaurant-menu'); ?></option>
-                                <option value="draft"><?php echo esc_html__('Bozza', 'easy-restaurant-menu'); ?></option>
-                            </select>
+                            <label for="erm-item-immagine"><?php echo esc_html__('Immagine', 'easy-restaurant-menu'); ?></label>
+                            <div class="erm-media-uploader">
+                                <div id="erm-item-immagine-preview" class="erm-image-preview"></div>
+                                <input type="hidden" id="erm-item-immagine" name="immagine" value="0">
+                                <button type="button" class="button erm-upload-image"><?php echo esc_html__('Seleziona Immagine', 'easy-restaurant-menu'); ?></button>
+                                <button type="button" class="button erm-remove-image" style="display: none;"><?php echo esc_html__('Rimuovi Immagine', 'easy-restaurant-menu'); ?></button>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="erm-form-group">
-                        <label for="erm-item-immagine"><?php echo esc_html__('Immagine', 'easy-restaurant-menu'); ?></label>
-                        <div class="erm-media-uploader">
-                            <div id="erm-item-immagine-preview" class="erm-image-preview"></div>
-                            <input type="hidden" id="erm-item-immagine" name="immagine" value="0">
-                            <button type="button" class="button erm-upload-image"><?php echo esc_html__('Seleziona Immagine', 'easy-restaurant-menu'); ?></button>
-                            <button type="button" class="button erm-remove-image" style="display: none;"><?php echo esc_html__('Rimuovi Immagine', 'easy-restaurant-menu'); ?></button>
+                        
+                        <div class="erm-form-actions">
+                            <button type="submit" class="button button-primary"><?php echo esc_html__('Salva Elemento', 'easy-restaurant-menu'); ?></button>
+                            <button type="button" class="button erm-delete-item" style="display: none; float: right; color: #a00;"><?php echo esc_html__('Elimina', 'easy-restaurant-menu'); ?></button>
                         </div>
-                    </div>
-                    
-                    <div class="erm-form-actions">
-                        <button type="submit" class="button button-primary"><?php echo esc_html__('Salva Elemento', 'easy-restaurant-menu'); ?></button>
-                        <button type="button" class="button erm-delete-item" style="display: none; float: right; color: #a00;"><?php echo esc_html__('Elimina', 'easy-restaurant-menu'); ?></button>
-                    </div>
-                </form>
-            </div>
-            
-            <div class="erm-items-container">
-                <?php if (empty($items)) : ?>
-                    <div class="erm-no-items">
-                        <p><?php echo esc_html__('Nessun elemento trovato in questa sezione. Aggiungi un nuovo elemento per iniziare.', 'easy-restaurant-menu'); ?></p>
-                    </div>
-                <?php else : ?>
-                    <div class="erm-items-list sortable">
-                        <?php foreach ($items as $item) : 
-                            $immagine_url = '';
-                            if (!empty($item['immagine'])) {
-                                $immagine = wp_get_attachment_image_src($item['immagine'], 'thumbnail');
-                                if ($immagine) {
-                                    $immagine_url = $immagine[0];
+                    </form>
+                </div>
+                
+                <div class="erm-items-container">
+                    <?php if (empty($items)) : ?>
+                        <div class="erm-no-items">
+                            <p><?php echo esc_html__('Nessun elemento trovato in questa sezione. Aggiungi un nuovo elemento per iniziare.', 'easy-restaurant-menu'); ?></p>
+                        </div>
+                    <?php else : ?>
+                        <div class="erm-items-list sortable">
+                            <?php foreach ($items as $item) : 
+                                $immagine_url = '';
+                                if (!empty($item['immagine'])) {
+                                    $immagine = wp_get_attachment_image_src($item['immagine'], 'thumbnail');
+                                    if ($immagine) {
+                                        $immagine_url = $immagine[0];
+                                    }
                                 }
-                            }
-                        ?>
-                            <div class="erm-item-card" data-id="<?php echo esc_attr($item['id']); ?>">
-                                <div class="erm-item-header">
-                                    <div class="erm-item-title-container">
-                                        <h3 class="erm-item-title"><?php echo esc_html($item['titolo']); ?></h3>
-                                        <div class="erm-item-price"><?php echo esc_html(number_format((float)$item['prezzo'], 2, ',', ' ')); ?> €</div>
-                                    </div>
-                                    <div class="erm-item-actions">
-                                        <span class="erm-status <?php echo esc_attr($item['status']); ?>"><?php echo esc_html($item['status'] === 'publish' ? __('Pubblicato', 'easy-restaurant-menu') : __('Bozza', 'easy-restaurant-menu')); ?></span>
-                                        <span class="dashicons dashicons-menu erm-handle"></span>
-                                    </div>
-                                </div>
-                                
-                                <div class="erm-item-content">
-                                    <?php if ($immagine_url) : ?>
-                                        <div class="erm-item-image">
-                                            <img src="<?php echo esc_url($immagine_url); ?>" alt="<?php echo esc_attr($item['titolo']); ?>">
+                            ?>
+                                <div class="erm-item-card" data-id="<?php echo esc_attr($item['id']); ?>">
+                                    <div class="erm-item-header">
+                                        <div class="erm-item-title-container">
+                                            <h3 class="erm-item-title"><?php echo esc_html($item['titolo']); ?></h3>
+                                            <div class="erm-item-price"><?php echo esc_html(number_format((float)$item['prezzo'], 2, ',', ' ')); ?> €</div>
                                         </div>
-                                    <?php endif; ?>
+                                        <div class="erm-item-actions">
+                                            <span class="erm-status <?php echo esc_attr($item['status']); ?>"><?php echo esc_html($item['status'] === 'publish' ? __('Pubblicato', 'easy-restaurant-menu') : __('Bozza', 'easy-restaurant-menu')); ?></span>
+                                            <span class="dashicons dashicons-menu erm-handle"></span>
+                                        </div>
+                                    </div>
                                     
-                                    <div class="erm-item-details">
-                                        <?php if (!empty($item['descrizione'])) : ?>
-                                            <p class="erm-item-description"><?php echo esc_html($item['descrizione']); ?></p>
+                                    <div class="erm-item-content">
+                                        <?php if ($immagine_url) : ?>
+                                            <div class="erm-item-image">
+                                                <img src="<?php echo esc_url($immagine_url); ?>" alt="<?php echo esc_attr($item['titolo']); ?>">
+                                            </div>
                                         <?php endif; ?>
                                         
-                                        <div class="erm-item-meta">
-                                            <span class="erm-item-id"><?php echo esc_html__('ID:', 'easy-restaurant-menu'); ?> <?php echo esc_html($item['id']); ?></span>
-                                            <span class="erm-item-order"><?php echo esc_html__('Ordine:', 'easy-restaurant-menu'); ?> <?php echo esc_html($item['ordine']); ?></span>
+                                        <div class="erm-item-details">
+                                            <?php if (!empty($item['descrizione'])) : ?>
+                                                <p class="erm-item-description"><?php echo esc_html($item['descrizione']); ?></p>
+                                            <?php endif; ?>
+                                            
+                                            <div class="erm-item-meta">
+                                                <span class="erm-item-id"><?php echo esc_html__('ID:', 'easy-restaurant-menu'); ?> <?php echo esc_html($item['id']); ?></span>
+                                                <span class="erm-item-order"><?php echo esc_html__('Ordine:', 'easy-restaurant-menu'); ?> <?php echo esc_html($item['ordine']); ?></span>
+                                            </div>
                                         </div>
                                     </div>
+                                    
+                                    <div class="erm-item-data" style="display: none;">
+                                        <span class="erm-data-id"><?php echo esc_attr($item['id']); ?></span>
+                                        <span class="erm-data-section-id"><?php echo esc_attr($item['section_id']); ?></span>
+                                        <span class="erm-data-titolo"><?php echo esc_attr($item['titolo']); ?></span>
+                                        <span class="erm-data-descrizione"><?php echo esc_attr($item['descrizione']); ?></span>
+                                        <span class="erm-data-prezzo"><?php echo esc_attr($item['prezzo']); ?></span>
+                                        <span class="erm-data-immagine"><?php echo esc_attr($item['immagine']); ?></span>
+                                        <span class="erm-data-ordine"><?php echo esc_attr($item['ordine']); ?></span>
+                                        <span class="erm-data-status"><?php echo esc_attr($item['status']); ?></span>
+                                    </div>
                                 </div>
-                                
-                                <div class="erm-item-data" style="display: none;">
-                                    <span class="erm-data-id"><?php echo esc_attr($item['id']); ?></span>
-                                    <span class="erm-data-section-id"><?php echo esc_attr($item['section_id']); ?></span>
-                                    <span class="erm-data-titolo"><?php echo esc_attr($item['titolo']); ?></span>
-                                    <span class="erm-data-descrizione"><?php echo esc_attr($item['descrizione']); ?></span>
-                                    <span class="erm-data-prezzo"><?php echo esc_attr($item['prezzo']); ?></span>
-                                    <span class="erm-data-immagine"><?php echo esc_attr($item['immagine']); ?></span>
-                                    <span class="erm-data-ordine"><?php echo esc_attr($item['ordine']); ?></span>
-                                    <span class="erm-data-status"><?php echo esc_attr($item['status']); ?></span>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
     <?php endif; ?>
 </div>

@@ -29,11 +29,13 @@ class Easy_Restaurant_Menu_Deactivator {
 		$remove_tables = \get_option('erm_remove_data_on_uninstall', false);
 		
 		if ($remove_tables) {
+			$table_menus = $wpdb->prefix . 'erm_menus';
 			$table_sections = $wpdb->prefix . 'erm_sections';
 			$table_items = $wpdb->prefix . 'erm_items';
 			
 			$wpdb->query("DROP TABLE IF EXISTS $table_items");
 			$wpdb->query("DROP TABLE IF EXISTS $table_sections");
+			$wpdb->query("DROP TABLE IF EXISTS $table_menus");
 		}
 	}
 } 

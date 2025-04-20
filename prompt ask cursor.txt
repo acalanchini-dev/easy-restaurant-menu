@@ -1,0 +1,11 @@
+descrizione di quello che si vuole implemetare
+esempio:
+ora quando aggiungo il blocco nell'editor tra le opzioni del blocco cè la selezione del menu e e la selezione della sezione. io voglio che una volta scelto il menu da renderizzare nel blocco il menu completo venga renderizzato a prescindere se è selezionata una sezione, poi se io velessi renderizzare una sezione specifica del menu allora seleziono la sezione da renderizzare nel blocco. il flusso deve essere:
+1- aggiungo il blocco nell'editor
+2- seleziono il menu da visualizzare (esempio "menu cena")
+3- il "menu cena" viene visualizzato con tutte le sezioni e gli elementi
+4- se volessi visualizzare una sezione specifica del "menu cena" seleziono la sezione (per esempio "primi")
+5- nel blocco viene renderizzatasolo la sezione "primi " del "menu cena"
+
+prompt  finale che non deve mancare:
+per favore scrivi un prompt dettagliato per l'agente AI per implemenare queste modifiche

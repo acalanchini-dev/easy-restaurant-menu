@@ -32,9 +32,45 @@
     }
   },
   "attributes": {
+    "menu_id": {
+      "type": "string",
+      "default": ""
+    },
     "section_id": {
       "type": "string",
       "default": ""
+    },
+    "showAllSections": {
+      "type": "boolean",
+      "default": true
+    },
+    "showMenuDescription": {
+      "type": "boolean",
+      "default": true
+    },
+    "showSectionDescriptions": {
+      "type": "boolean",
+      "default": true
+    },
+    "showMenuTitle": {
+      "type": "boolean",
+      "default": true
+    },
+    "menuTitleAlignment": {
+      "type": "string",
+      "default": "center"
+    },
+    "sectionTitleAlignment": {
+      "type": "string",
+      "default": "center"
+    },
+    "menuDescriptionAlignment": {
+      "type": "string",
+      "default": "center"
+    },
+    "sectionDescriptionAlignment": {
+      "type": "string",
+      "default": "center"
     },
     "displayType": {
       "type": "string",
@@ -67,6 +103,10 @@
     "imageSquare": {
       "type": "boolean",
       "default": true
+    },
+    "listImageAlignment": {
+      "type": "string",
+      "default": "center"
     },
     "imageSize": {
       "type": "number",
@@ -131,6 +171,14 @@
       "default": ""
     },
     "titleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "sectionTitleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "sectionTitleUnderlineColor": {
       "type": "string",
       "default": ""
     },

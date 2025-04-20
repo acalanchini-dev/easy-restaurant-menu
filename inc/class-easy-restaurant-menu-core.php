@@ -3,8 +3,10 @@
  * The core plugin class.
  *
  * This is used to define internationalization, admin-specific hooks, and
- * public-facing site hooks and more.
+ * public-facing site hooks.
  *
+ * Also maintains the unique identifier of this plugin as well as the current
+ * version of the plugin.
  *
  * @since      1.0.0
  * @package    Easy_Restaurant_Menu
@@ -13,9 +15,9 @@
 
 namespace EASY_RESTAURANT_MENU;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-
-Easy_Restaurant_Menu_Helper::using('inc/class-easy-restaurant-menu-loader.php');
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+} // Exit if accessed directly
 
 class Easy_Restaurant_Menu_Core extends Easy_Restaurant_Menu_Loader {
 
@@ -53,6 +55,9 @@ class Easy_Restaurant_Menu_Core extends Easy_Restaurant_Menu_Loader {
 		
 		//Defines REST API endpoints (optional)
 		$this->define_rest_api();
+		
+		//Load caching funzionality
+		$this->load_caching();
 
 	}
 
@@ -95,6 +100,9 @@ class Easy_Restaurant_Menu_Core extends Easy_Restaurant_Menu_Loader {
 		$plugin_options = new Easy_Restaurant_Menu_Options();
 
 		$this->add_action( 'plugins_loaded', $plugin_options, 'load_easy_restaurant_menu_options' );
+		
+		// Registra gli handler AJAX per le opzioni
+		$this->add_action( 'admin_init', $plugin_options, 'register_ajax_handlers' );
 
 	}
 
@@ -200,6 +208,90 @@ class Easy_Restaurant_Menu_Core extends Easy_Restaurant_Menu_Loader {
 		$plugin_rest = new Easy_Restaurant_Menu_REST();
 		
 		$this->add_action( 'init', $plugin_rest, 'initialize' );
+	}
+	
+	/**
+	 * Initialize caching functionality
+	 *
+	 * @since    1.1.0
+	 * @access   private
+	 */
+	private function load_caching(): void {
+		/**
+		 * The class responsible for caching
+		 */
+		Easy_Restaurant_Menu_Helper::using('inc/class-easy-restaurant-menu-cache.php');
+		
+		// Non è necessario creare un'istanza poiché la classe Cache utilizza metodi statici
+		// Ma registriamo hook per invalidare la cache quando dati rilevanti vengono modificati
+		
+		// Svuota la cache quando vengono aggiornate le opzioni del plugin
+		$this->add_action('update_option_erm_currency_symbol', $this, 'flush_display_cache');
+		$this->add_action('update_option_erm_currency_position', $this, 'flush_display_cache');
+		$this->add_action('update_option_erm_price_decimal_separator', $this, 'flush_display_cache');
+		$this->add_action('update_option_erm_price_thousand_separator', $this, 'flush_display_cache');
+		$this->add_action('update_option_erm_price_decimals', $this, 'flush_display_cache');
+		$this->add_action('update_option_erm_price_format_template', $this, 'flush_display_cache');
+		$this->add_action('update_option_erm_style_preset', $this, 'flush_display_cache');
+		
+		// Svuota le relative cache quando vengono modificati i dati
+		$this->add_action('wp_ajax_erm_save_menu', $this, 'flush_menus_cache');
+		$this->add_action('wp_ajax_erm_delete_menu', $this, 'flush_menus_cache');
+		$this->add_action('wp_ajax_erm_save_section', $this, 'flush_sections_cache');
+		$this->add_action('wp_ajax_erm_delete_section', $this, 'flush_sections_cache');
+		$this->add_action('wp_ajax_erm_save_item', $this, 'flush_items_cache');
+		$this->add_action('wp_ajax_erm_delete_item', $this, 'flush_items_cache');
+		$this->add_action('wp_ajax_erm_update_order', $this, 'flush_display_cache');
+	}
+	
+	/**
+	 * Svuota la cache dei menu
+	 *
+	 * @since    1.1.0
+	 */
+	public function flush_menus_cache(): void {
+		if (class_exists('EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Cache')) {
+			Easy_Restaurant_Menu_Cache::delete_group('menus');
+			Easy_Restaurant_Menu_Cache::delete_group('complete_menu');
+			$this->flush_display_cache();
+		}
+	}
+	
+	/**
+	 * Svuota la cache delle sezioni
+	 *
+	 * @since    1.1.0
+	 */
+	public function flush_sections_cache(): void {
+		if (class_exists('EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Cache')) {
+			Easy_Restaurant_Menu_Cache::delete_group('sections');
+			Easy_Restaurant_Menu_Cache::delete_group('complete_menu');
+			$this->flush_display_cache();
+		}
+	}
+	
+	/**
+	 * Svuota la cache degli elementi
+	 *
+	 * @since    1.1.0
+	 */
+	public function flush_items_cache(): void {
+		if (class_exists('EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Cache')) {
+			Easy_Restaurant_Menu_Cache::delete_group('items');
+			Easy_Restaurant_Menu_Cache::delete_group('complete_menu');
+			$this->flush_display_cache();
+		}
+	}
+	
+	/**
+	 * Svuota la cache di visualizzazione (frontend)
+	 *
+	 * @since    1.1.0
+	 */
+	public function flush_display_cache(): void {
+		if (class_exists('EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Cache')) {
+			Easy_Restaurant_Menu_Cache::delete_group('render');
+		}
 	}
 
 	/**

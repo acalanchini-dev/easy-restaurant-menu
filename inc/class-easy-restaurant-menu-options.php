@@ -49,10 +49,141 @@ class Easy_Restaurant_Menu_Options {
 			'erm_currency_position' 
 		);
 		
+		// Nuove impostazioni per formato prezzo
+		register_setting(
+			'erm_settings_group',
+			'erm_price_decimal_separator'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_price_thousand_separator'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_price_decimals'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_price_format_template'
+		);
+		
 		// Registrazione delle impostazioni per il layout
 		register_setting(
 			'erm_settings_group',
 			'erm_default_layout'
+		);
+		
+		// Registrazione preset di stile
+		register_setting(
+			'erm_settings_group',
+			'erm_style_preset'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_preset_menu_title_color'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_preset_section_title_color'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_preset_price_color'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_preset_description_color'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_preset_background_color'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_preset_border_color'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_preset_border_radius'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_preset_text_alignment'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_preset_font_size_title'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_preset_font_size_description'
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_preset_spacing'
+		);
+		
+		// Nuove impostazioni per il caching
+		register_setting(
+			'erm_settings_group',
+			'erm_enable_caching',
+			[
+				'type' => 'boolean',
+				'default' => true,
+				'sanitize_callback' => 'rest_sanitize_boolean'
+			]
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_cache_expiration',
+			[
+				'type' => 'integer',
+				'default' => 3600,
+				'sanitize_callback' => 'absint'
+			]
+		);
+		
+		// Statistiche della cache (sola lettura)
+		register_setting(
+			'erm_settings_group',
+			'erm_cache_hits',
+			[
+				'type' => 'integer',
+				'default' => 0
+			]
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_cache_misses',
+			[
+				'type' => 'integer',
+				'default' => 0
+			]
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_cache_last_flush',
+			[
+				'type' => 'integer',
+				'default' => 0
+			]
 		);
 	}
 
@@ -70,6 +201,141 @@ class Easy_Restaurant_Menu_Options {
 		
 		$admin = new Easy_Restaurant_Menu_Admin();
 		$admin->get_options_page();
+	}
+	
+	/**
+	 * Restituisce i preset di stile predefiniti
+	 *
+	 * @since    1.1.0
+	 * @return array Array di preset con le rispettive configurazioni
+	 */
+	public static function get_style_presets(): array {
+		return [
+			'elegante' => [
+				'name' => __('Elegante', 'easy-restaurant-menu'),
+				'menu_title_color' => '#2c3e50',
+				'section_title_color' => '#34495e',
+				'price_color' => '#c0392b',
+				'description_color' => '#7f8c8d',
+				'background_color' => '#ffffff',
+				'border_color' => '#ecf0f1',
+				'border_radius' => 0,
+				'text_alignment' => 'center',
+				'font_size_title' => '1.4',
+				'font_size_description' => '1.0',
+				'spacing' => 20
+			],
+			'casual' => [
+				'name' => __('Casual', 'easy-restaurant-menu'),
+				'menu_title_color' => '#3498db',
+				'section_title_color' => '#2980b9',
+				'price_color' => '#27ae60',
+				'description_color' => '#95a5a6',
+				'background_color' => '#f9f9f9',
+				'border_color' => '#e0e0e0',
+				'border_radius' => 8,
+				'text_alignment' => 'left',
+				'font_size_title' => '1.3',
+				'font_size_description' => '0.95',
+				'spacing' => 15
+			],
+			'minimalista' => [
+				'name' => __('Minimalista', 'easy-restaurant-menu'),
+				'menu_title_color' => '#000000',
+				'section_title_color' => '#333333',
+				'price_color' => '#000000',
+				'description_color' => '#666666',
+				'background_color' => '#ffffff',
+				'border_color' => '#f2f2f2',
+				'border_radius' => 0,
+				'text_alignment' => 'left',
+				'font_size_title' => '1.2',
+				'font_size_description' => '0.9',
+				'spacing' => 10
+			],
+			'rustico' => [
+				'name' => __('Rustico', 'easy-restaurant-menu'),
+				'menu_title_color' => '#5d4037',
+				'section_title_color' => '#795548',
+				'price_color' => '#8d6e63',
+				'description_color' => '#a1887f',
+				'background_color' => '#efebe9',
+				'border_color' => '#d7ccc8',
+				'border_radius' => 4,
+				'text_alignment' => 'center',
+				'font_size_title' => '1.4',
+				'font_size_description' => '1.0',
+				'spacing' => 20
+			]
+		];
+	}
+	
+	/**
+	 * Gestisce la pulizia manuale della cache
+	 * 
+	 * Registra un'azione AJAX per svuotare la cache
+	 *
+	 * @since    1.1.0
+	 */
+	public function register_ajax_handlers(): void {
+		add_action('wp_ajax_erm_flush_cache', [$this, 'ajax_flush_cache']);
+	}
+	
+	/**
+	 * Handler AJAX per svuotare la cache
+	 *
+	 * @since    1.1.0
+	 */
+	public function ajax_flush_cache(): void {
+		// Verifica che la richiesta sia valida
+		if (!current_user_can('manage_options')) {
+			wp_send_json_error(['message' => __('Non hai i permessi per eseguire questa operazione.', 'easy-restaurant-menu')], 403);
+			return;
+		}
+		
+		// Verifica nonce
+		if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'erm_admin_nonce')) {
+			wp_send_json_error(['message' => __('Verifica di sicurezza fallita.', 'easy-restaurant-menu')], 400);
+			return;
+		}
+		
+		// Carica la classe cache se non lo è già
+		if (!class_exists('EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Cache')) {
+			Easy_Restaurant_Menu_Helper::using('inc/class-easy-restaurant-menu-cache.php');
+		}
+		
+		// Svuota la cache
+		$count = Easy_Restaurant_Menu_Cache::flush_all();
+		
+		// Restituisci il risultato
+		wp_send_json_success([
+			'message' => sprintf(
+				__('Cache svuotata con successo. %d elementi rimossi.', 'easy-restaurant-menu'),
+				$count
+			),
+			'count' => $count,
+			'stats' => Easy_Restaurant_Menu_Cache::get_stats()
+		]);
+	}
+	
+	/**
+	 * Restituisce i tempi di scadenza disponibili per la cache
+	 *
+	 * @since    1.1.0
+	 * @return array Array di opzioni per il tempo di scadenza
+	 */
+	public static function get_cache_expiration_options(): array {
+		return [
+			300 => __('5 minuti', 'easy-restaurant-menu'),
+			900 => __('15 minuti', 'easy-restaurant-menu'),
+			1800 => __('30 minuti', 'easy-restaurant-menu'),
+			3600 => __('1 ora', 'easy-restaurant-menu'),
+			7200 => __('2 ore', 'easy-restaurant-menu'),
+			14400 => __('4 ore', 'easy-restaurant-menu'),
+			43200 => __('12 ore', 'easy-restaurant-menu'),
+			86400 => __('1 giorno', 'easy-restaurant-menu'),
+			604800 => __('1 settimana', 'easy-restaurant-menu')
+		];
 	}
 }
 

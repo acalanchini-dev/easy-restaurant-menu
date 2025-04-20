@@ -66,6 +66,12 @@ register_activation_hook( __FILE__, 'easy_restaurant_menu_activate' );
 register_deactivation_hook( __FILE__, 'easy_restaurant_menu_deactivate' );
 
 /**
+ * Carica la classe Loader prima della classe Core
+ * @since    1.0.0
+ */
+Easy_Restaurant_Menu_Helper::using( 'inc/class-easy-restaurant-menu-loader.php' );
+
+/**
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, public-facing site hooks and more...
  */

@@ -74,23 +74,128 @@ const getDefaultSpacing = (defaultValues = {}) => {
     } = props;
     const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.useBlockProps)();
 
-    // Stato per memorizzare le sezioni caricate dall'API
+    // Stato per memorizzare menu e sezioni caricate dall'API
+    const [menus, setMenus] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_6__.useState)([]);
     const [sections, setSections] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_6__.useState)([]);
-    const [isLoading, setIsLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_6__.useState)(true);
+    const [isMenuLoading, setIsMenuLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_6__.useState)(true);
+    const [isSectionLoading, setIsSectionLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_6__.useState)(false);
 
-    // Carica le sezioni quando il componente è montato
+    // Nuovo stato per le opzioni globali
+    const [globalOptions, setGlobalOptions] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_6__.useState)(null);
+    const [isLoadingOptions, setIsLoadingOptions] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_6__.useState)(true);
+
+    // Funzione per verificare se è un blocco nuovo
+    const isNewBlock = () => {
+      // Un blocco è considerato nuovo se ha i valori predefiniti dal block.json
+      return attributes.displayType === _block_json__WEBPACK_IMPORTED_MODULE_11__.attributes.displayType["default"] && attributes.titleColor === _block_json__WEBPACK_IMPORTED_MODULE_11__.attributes.titleColor["default"] && attributes.sectionTitleColor === _block_json__WEBPACK_IMPORTED_MODULE_11__.attributes.sectionTitleColor["default"] && attributes.priceColor === _block_json__WEBPACK_IMPORTED_MODULE_11__.attributes.priceColor["default"] && attributes.descriptionColor === _block_json__WEBPACK_IMPORTED_MODULE_11__.attributes.descriptionColor["default"] && attributes.backgroundColor === _block_json__WEBPACK_IMPORTED_MODULE_11__.attributes.backgroundColor["default"] && attributes.borderColor === _block_json__WEBPACK_IMPORTED_MODULE_11__.attributes.borderColor["default"] && attributes.borderRadius === _block_json__WEBPACK_IMPORTED_MODULE_11__.attributes.borderRadius["default"] &&
+      // Verificando pochi attributi chiave è sufficiente per determinare se è un blocco nuovo
+      true;
+    };
+
+    // Funzione per applicare le impostazioni predefinite dalle opzioni globali
+    const applyGlobalDefaults = options => {
+      if (!options) return;
+      const {
+        preset_details,
+        default_layout
+      } = options;
+
+      // Aggiorna gli attributi con i valori delle opzioni globali
+      const updates = {
+        displayType: default_layout || 'list'
+      };
+
+      // Se è disponibile un preset, applica le sue impostazioni
+      if (preset_details) {
+        updates.titleColor = preset_details.menu_title_color;
+        updates.sectionTitleColor = preset_details.section_title_color;
+        updates.priceColor = preset_details.price_color;
+        updates.descriptionColor = preset_details.description_color;
+        updates.backgroundColor = preset_details.background_color;
+        updates.borderColor = preset_details.border_color;
+        updates.borderRadius = preset_details.border_radius;
+
+        // Imposta gli allineamenti in base al preset
+        updates.menuTitleAlignment = preset_details.text_alignment;
+        updates.sectionTitleAlignment = preset_details.text_alignment;
+        updates.menuDescriptionAlignment = preset_details.text_alignment;
+        updates.sectionDescriptionAlignment = preset_details.text_alignment;
+
+        // Imposta le dimensioni del carattere
+        if (preset_details.spacing) {
+          updates.itemSpacing = preset_details.spacing;
+        }
+      }
+
+      // Applica tutti gli aggiornamenti
+      setAttributes(updates);
+    };
+
+    // Carica le opzioni globali all'inizio
     (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_6__.useEffect)(() => {
-      setIsLoading(true);
+      setIsLoadingOptions(true);
       _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_8___default()({
-        path: '/easy-restaurant-menu/v1/sections'
+        path: '/easy-restaurant-menu/v1/options'
       }).then(data => {
-        setSections(data || []);
-        setIsLoading(false);
+        setGlobalOptions(data);
+        setIsLoadingOptions(false);
+
+        // Se è un nuovo blocco, applica le impostazioni predefinite dalle opzioni globali
+        if (isNewBlock()) {
+          applyGlobalDefaults(data);
+        }
       }).catch(error => {
-        console.error('Errore nel caricamento delle sezioni:', error);
-        setIsLoading(false);
+        console.error('Errore nel caricamento delle opzioni globali:', error);
+        setIsLoadingOptions(false);
       });
     }, []);
+
+    // Carica i menu quando il componente è montato
+    (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_6__.useEffect)(() => {
+      setIsMenuLoading(true);
+      _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_8___default()({
+        path: '/easy-restaurant-menu/v1/menus'
+      }).then(data => {
+        setMenus(data || []);
+        setIsMenuLoading(false);
+      }).catch(error => {
+        console.error('Errore nel caricamento dei menu:', error);
+        setIsMenuLoading(false);
+      });
+    }, []);
+
+    // Carica le sezioni quando viene selezionato un menu
+    (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_6__.useEffect)(() => {
+      if (!attributes.menu_id) {
+        setSections([]);
+        return;
+      }
+      setIsSectionLoading(true);
+      _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_8___default()({
+        path: `/easy-restaurant-menu/v1/menus/${attributes.menu_id}/sections`
+      }).then(data => {
+        setSections(data || []);
+        setIsSectionLoading(false);
+
+        // Solo se showAllSections è false, selezioniamo la prima sezione di default
+        if (!attributes.showAllSections && !attributes.section_id && data && data.length > 0) {
+          setAttributes({
+            section_id: data[0].id.toString()
+          });
+        } else if (!attributes.showAllSections && attributes.section_id) {
+          // Verifica se la sezione selezionata esiste nel nuovo menu
+          const sectionExists = data.some(section => section.id.toString() === attributes.section_id);
+          if (!sectionExists && data.length > 0) {
+            setAttributes({
+              section_id: data[0].id.toString()
+            });
+          }
+        }
+      }).catch(error => {
+        console.error('Errore nel caricamento delle sezioni:', error);
+        setIsSectionLoading(false);
+      });
+    }, [attributes.menu_id]);
 
     // Funzione per reset di tutte le spaziature
     const resetAllSpacing = () => {
@@ -109,9 +214,60 @@ const getDefaultSpacing = (defaultValues = {}) => {
       });
     };
 
-    // Prepara le opzioni per il SelectControl
+    // Quando si cambia l'opzione di visualizzare tutte le sezioni
+    const handleShowAllSectionsChange = value => {
+      setAttributes({
+        showAllSections: value
+      });
+
+      // Se si passa a visualizzare tutte le sezioni, reset della sezione selezionata
+      if (value) {
+        setAttributes({
+          section_id: ''
+        });
+      } else if (sections && sections.length > 0) {
+        // Se si passa a visualizzare una sola sezione, seleziona la prima se non ce n'è una già selezionata
+        if (!attributes.section_id) {
+          setAttributes({
+            section_id: sections[0].id.toString()
+          });
+        }
+      }
+    };
+
+    // Prepara le opzioni per il SelectControl dei menu
+    const menuOptions = [];
+    if (isMenuLoading) {
+      menuOptions.push({
+        value: '',
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Caricamento menu...', 'easy-restaurant-menu')
+      });
+    } else if (menus && menus.length > 0) {
+      menuOptions.push({
+        value: '',
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Seleziona un menu', 'easy-restaurant-menu')
+      });
+      menus.forEach(menu => {
+        menuOptions.push({
+          value: menu.id.toString(),
+          label: menu.nome
+        });
+      });
+    } else {
+      menuOptions.push({
+        value: '',
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Nessun menu disponibile', 'easy-restaurant-menu')
+      });
+    }
+
+    // Prepara le opzioni per il SelectControl delle sezioni
     const sectionOptions = [];
-    if (isLoading) {
+    if (!attributes.menu_id) {
+      sectionOptions.push({
+        value: '',
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Prima seleziona un menu', 'easy-restaurant-menu')
+      });
+    } else if (isSectionLoading) {
       sectionOptions.push({
         value: '',
         label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Caricamento sezioni...', 'easy-restaurant-menu')
@@ -130,7 +286,7 @@ const getDefaultSpacing = (defaultValues = {}) => {
     } else {
       sectionOptions.push({
         value: '',
-        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Nessuna sezione disponibile', 'easy-restaurant-menu')
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Nessuna sezione disponibile in questo menu', 'easy-restaurant-menu')
       });
     }
 
@@ -156,6 +312,27 @@ const getDefaultSpacing = (defaultValues = {}) => {
     }, {
       value: 'border',
       label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Bordo', 'easy-restaurant-menu')
+    }];
+
+    // Opzioni per l'allineamento dell'immagine nella lista
+    const alignmentOptions = [{
+      value: 'center',
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Allineamento centrato', 'easy-restaurant-menu')
+    }, {
+      value: 'top',
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Allineamento in alto', 'easy-restaurant-menu')
+    }];
+
+    // Opzioni per l'allineamento del testo
+    const textAlignmentOptions = [{
+      value: 'left',
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Sinistra', 'easy-restaurant-menu')
+    }, {
+      value: 'center',
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Centro', 'easy-restaurant-menu')
+    }, {
+      value: 'right',
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Destra', 'easy-restaurant-menu')
     }];
 
     // Presets di spaziatura
@@ -284,16 +461,33 @@ const getDefaultSpacing = (defaultValues = {}) => {
       }
     };
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InspectorControls, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.PanelBody, {
-      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Impostazioni Contenuto', 'easy-restaurant-menu'),
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Impostazioni Generali', 'easy-restaurant-menu'),
       initialOpen: true
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.SelectControl, {
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Menu', 'easy-restaurant-menu'),
+      value: attributes.menu_id,
+      options: menuOptions,
+      onChange: value => setAttributes({
+        menu_id: value,
+        section_id: ''
+      })
+    }), attributes.menu_id && sections && sections.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.ToggleControl, {
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Mostra tutte le sezioni', 'easy-restaurant-menu'),
+      checked: attributes.showAllSections,
+      onChange: handleShowAllSectionsChange,
+      help: attributes.showAllSections ? (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Visualizza tutte le sezioni del menu', 'easy-restaurant-menu') : (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Visualizza solo una sezione specifica', 'easy-restaurant-menu')
+    }), !attributes.showAllSections && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.SelectControl, {
       label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Sezione Menu', 'easy-restaurant-menu'),
       value: attributes.section_id,
       options: sectionOptions,
       onChange: value => setAttributes({
         section_id: value
-      })
-    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.SelectControl, {
+      }),
+      disabled: !attributes.menu_id || isSectionLoading
+    })), attributes.menu_id && sections && sections.length === 0 && !isSectionLoading && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Notice, {
+      status: "warning",
+      isDismissible: false
+    }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Questo menu non ha sezioni. Aggiungine almeno una nell\'area amministrativa.', 'easy-restaurant-menu')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.SelectControl, {
       label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Tipo di visualizzazione', 'easy-restaurant-menu'),
       value: attributes.displayType,
       options: displayOptions,
@@ -308,6 +502,14 @@ const getDefaultSpacing = (defaultValues = {}) => {
       }),
       min: 1,
       max: 4
+    }), attributes.displayType === 'list' && attributes.showImages && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.RadioControl, {
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Allineamento immagine-testo', 'easy-restaurant-menu'),
+      selected: attributes.listImageAlignment,
+      options: alignmentOptions,
+      onChange: value => setAttributes({
+        listImageAlignment: value
+      }),
+      help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Sceglie come allineare verticalmente il testo rispetto all\'immagine nella vista lista', 'easy-restaurant-menu')
     }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.ToggleControl, {
       label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Mostra immagini', 'easy-restaurant-menu'),
       checked: attributes.showImages,
@@ -346,18 +548,49 @@ const getDefaultSpacing = (defaultValues = {}) => {
         showPrices: value
       })
     }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.ToggleControl, {
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Mostra descrizioni', 'easy-restaurant-menu'),
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Mostra descrizioni elementi', 'easy-restaurant-menu'),
       checked: attributes.showDescriptions,
       onChange: value => setAttributes({
         showDescriptions: value
       })
+    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.ToggleControl, {
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Mostra descrizione menu', 'easy-restaurant-menu'),
+      checked: attributes.showMenuDescription,
+      onChange: value => setAttributes({
+        showMenuDescription: value
+      }),
+      help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Mostra/nascondi la descrizione del menu completo', 'easy-restaurant-menu')
+    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.ToggleControl, {
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Mostra descrizioni sezioni', 'easy-restaurant-menu'),
+      checked: attributes.showSectionDescriptions,
+      onChange: value => setAttributes({
+        showSectionDescriptions: value
+      }),
+      help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Mostra/nascondi le descrizioni delle sezioni', 'easy-restaurant-menu')
+    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.ToggleControl, {
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Mostra titolo menu', 'easy-restaurant-menu'),
+      checked: attributes.showMenuTitle,
+      onChange: value => setAttributes({
+        showMenuTitle: value
+      }),
+      help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Mostra/nascondi il titolo principale del menu', 'easy-restaurant-menu')
     })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.PanelBody, {
       title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Stile e Colori', 'easy-restaurant-menu'),
       initialOpen: false
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Colore titoli', 'easy-restaurant-menu')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.ColorPalette, {
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Colore titoli elementi', 'easy-restaurant-menu')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.ColorPalette, {
       value: attributes.titleColor,
       onChange: value => setAttributes({
         titleColor: value
+      })
+    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Colore titoli sezioni', 'easy-restaurant-menu')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.ColorPalette, {
+      value: attributes.sectionTitleColor,
+      onChange: value => setAttributes({
+        sectionTitleColor: value
+      })
+    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Colore linea sotto i titoli sezioni', 'easy-restaurant-menu')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.ColorPalette, {
+      value: attributes.sectionTitleUnderlineColor,
+      onChange: value => setAttributes({
+        sectionTitleUnderlineColor: value
       })
     }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Colore prezzi', 'easy-restaurant-menu')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.ColorPalette, {
       value: attributes.priceColor,
@@ -535,12 +768,86 @@ const getDefaultSpacing = (defaultValues = {}) => {
       }],
       allowReset: true,
       resetValues: getDefaultSpacing()
-    }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-      ...blockProps
+    })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.PanelBody, {
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Allineamento Testi', 'easy-restaurant-menu'),
+      initialOpen: false
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Allineamento titolo menu', 'easy-restaurant-menu')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.ButtonGroup, null, textAlignmentOptions.map(option => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
+      key: option.value,
+      isPrimary: attributes.menuTitleAlignment === option.value,
+      isSecondary: attributes.menuTitleAlignment !== option.value,
+      onClick: () => setAttributes({
+        menuTitleAlignment: option.value
+      })
+    }, option.label))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
+      style: {
+        marginTop: '15px'
+      }
+    }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Allineamento titoli sezioni', 'easy-restaurant-menu')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.ButtonGroup, null, textAlignmentOptions.map(option => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
+      key: option.value,
+      isPrimary: attributes.sectionTitleAlignment === option.value,
+      isSecondary: attributes.sectionTitleAlignment !== option.value,
+      onClick: () => setAttributes({
+        sectionTitleAlignment: option.value
+      })
+    }, option.label))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
+      style: {
+        marginTop: '15px'
+      }
+    }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Allineamento descrizione menu', 'easy-restaurant-menu')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.ButtonGroup, null, textAlignmentOptions.map(option => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
+      key: option.value,
+      isPrimary: attributes.menuDescriptionAlignment === option.value,
+      isSecondary: attributes.menuDescriptionAlignment !== option.value,
+      onClick: () => setAttributes({
+        menuDescriptionAlignment: option.value
+      })
+    }, option.label))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
+      style: {
+        marginTop: '15px'
+      }
+    }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Allineamento descrizioni sezioni', 'easy-restaurant-menu')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.ButtonGroup, null, textAlignmentOptions.map(option => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
+      key: option.value,
+      isPrimary: attributes.sectionDescriptionAlignment === option.value,
+      isSecondary: attributes.sectionDescriptionAlignment !== option.value,
+      onClick: () => setAttributes({
+        sectionDescriptionAlignment: option.value
+      })
+    }, option.label)))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.PanelBody, {
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Impostazioni Globali', 'easy-restaurant-menu'),
+      initialOpen: false
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-      className: "erm-block-preview"
-    }, !attributes.section_id ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Seleziona una sezione del menu dal pannello laterale.', 'easy-restaurant-menu')) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)((_wordpress_server_side_render__WEBPACK_IMPORTED_MODULE_7___default()), {
-      block: _block_json__WEBPACK_IMPORTED_MODULE_11__.name,
+      style: {
+        marginBottom: '15px'
+      }
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Applica le impostazioni globali del plugin a questo blocco.', 'easy-restaurant-menu')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
+      isPrimary: true,
+      onClick: () => {
+        if (globalOptions) {
+          applyGlobalDefaults(globalOptions);
+        }
+      },
+      disabled: isLoadingOptions,
+      style: {
+        width: '100%',
+        justifyContent: 'center',
+        marginTop: '10px'
+      }
+    }, isLoadingOptions ? (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Caricamento...', 'easy-restaurant-menu') : (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Applica Impostazioni Globali', 'easy-restaurant-menu'))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Notice, {
+      status: "info",
+      isDismissible: false
+    }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Questo sovrascriverà le impostazioni di colore, allineamento e layout attuali del blocco.', 'easy-restaurant-menu')))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      ...blockProps
+    }, !attributes.menu_id ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "erm-editor-placeholder"
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "erm-editor-placeholder-icon dashicons dashicons-food"
+    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "erm-editor-placeholder-title"
+    }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Menu Ristorante', 'easy-restaurant-menu')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "erm-editor-placeholder-description"
+    }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Seleziona un menu dal pannello laterale per iniziare.', 'easy-restaurant-menu'))) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "erm-editor-preview"
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)((_wordpress_server_side_render__WEBPACK_IMPORTED_MODULE_7___default()), {
+      block: "easy-restaurant-menu/restaurant-menu",
       attributes: attributes
     }))));
   },
@@ -672,7 +979,7 @@ module.exports = window["wp"]["serverSideRender"];
   \****************************************/
 /***/ ((module) => {
 
-module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"easy-restaurant-menu/restaurant-menu","version":"1.0.0","title":"Menu Ristorante","category":"widgets","icon":"food","description":"Blocco per visualizzare il menu del ristorante con varie opzioni di personalizzazione","supports":{"html":false,"align":["wide","full"],"color":{"background":true,"text":true,"link":true,"gradients":true},"spacing":{"margin":true,"padding":true},"typography":{"fontSize":true,"lineHeight":true,"fontWeight":true,"fontStyle":true,"fontFamily":true}},"attributes":{"section_id":{"type":"string","default":""},"displayType":{"type":"string","default":"grid"},"columns":{"type":"number","default":2},"showImages":{"type":"boolean","default":true},"showPrices":{"type":"boolean","default":true},"showDescriptions":{"type":"boolean","default":true},"imageSizeGrid":{"type":"number","default":200},"imageSizeList":{"type":"number","default":90},"imageSquare":{"type":"boolean","default":true},"imageSize":{"type":"number","default":100},"imageMargin":{"type":"object","default":{"top":0,"right":0,"bottom":0,"left":0}},"imagePadding":{"type":"object","default":{"top":0,"right":0,"bottom":0,"left":0}},"titleMargin":{"type":"object","default":{"top":0,"right":0,"bottom":0,"left":0}},"priceMargin":{"type":"object","default":{"top":0,"right":0,"bottom":0,"left":0}},"descriptionMargin":{"type":"object","default":{"top":0,"right":0,"bottom":0,"left":0}},"contentPadding":{"type":"object","default":{"top":15,"right":15,"bottom":15,"left":15}},"priceColor":{"type":"string","default":""},"titleColor":{"type":"string","default":""},"descriptionColor":{"type":"string","default":""},"backgroundColor":{"type":"string","default":""},"itemSpacing":{"type":"number","default":20},"borderRadius":{"type":"number","default":0},"borderWidth":{"type":"number","default":0},"borderColor":{"type":"string","default":""},"boxShadow":{"type":"boolean","default":false},"hoverEffect":{"type":"string","default":"none"}},"textdomain":"easy-restaurant-menu","editorScript":"file:./index.js","editorStyle":"file:./editor.scss","style":"file:./style.scss","render":"file:./render.php"}');
+module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"easy-restaurant-menu/restaurant-menu","version":"1.0.0","title":"Menu Ristorante","category":"widgets","icon":"food","description":"Blocco per visualizzare il menu del ristorante con varie opzioni di personalizzazione","supports":{"html":false,"align":["wide","full"],"color":{"background":true,"text":true,"link":true,"gradients":true},"spacing":{"margin":true,"padding":true},"typography":{"fontSize":true,"lineHeight":true,"fontWeight":true,"fontStyle":true,"fontFamily":true}},"attributes":{"menu_id":{"type":"string","default":""},"section_id":{"type":"string","default":""},"showAllSections":{"type":"boolean","default":true},"showMenuDescription":{"type":"boolean","default":true},"showSectionDescriptions":{"type":"boolean","default":true},"showMenuTitle":{"type":"boolean","default":true},"menuTitleAlignment":{"type":"string","default":"center"},"sectionTitleAlignment":{"type":"string","default":"center"},"menuDescriptionAlignment":{"type":"string","default":"center"},"sectionDescriptionAlignment":{"type":"string","default":"center"},"displayType":{"type":"string","default":"grid"},"columns":{"type":"number","default":2},"showImages":{"type":"boolean","default":true},"showPrices":{"type":"boolean","default":true},"showDescriptions":{"type":"boolean","default":true},"imageSizeGrid":{"type":"number","default":200},"imageSizeList":{"type":"number","default":90},"imageSquare":{"type":"boolean","default":true},"listImageAlignment":{"type":"string","default":"center"},"imageSize":{"type":"number","default":100},"imageMargin":{"type":"object","default":{"top":0,"right":0,"bottom":0,"left":0}},"imagePadding":{"type":"object","default":{"top":0,"right":0,"bottom":0,"left":0}},"titleMargin":{"type":"object","default":{"top":0,"right":0,"bottom":0,"left":0}},"priceMargin":{"type":"object","default":{"top":0,"right":0,"bottom":0,"left":0}},"descriptionMargin":{"type":"object","default":{"top":0,"right":0,"bottom":0,"left":0}},"contentPadding":{"type":"object","default":{"top":15,"right":15,"bottom":15,"left":15}},"priceColor":{"type":"string","default":""},"titleColor":{"type":"string","default":""},"sectionTitleColor":{"type":"string","default":""},"sectionTitleUnderlineColor":{"type":"string","default":""},"descriptionColor":{"type":"string","default":""},"backgroundColor":{"type":"string","default":""},"itemSpacing":{"type":"number","default":20},"borderRadius":{"type":"number","default":0},"borderWidth":{"type":"number","default":0},"borderColor":{"type":"string","default":""},"boxShadow":{"type":"boolean","default":false},"hoverEffect":{"type":"string","default":"none"}},"textdomain":"easy-restaurant-menu","editorScript":"file:./index.js","editorStyle":"file:./editor.scss","style":"file:./style.scss","render":"file:./render.php"}');
 
 /***/ })
 

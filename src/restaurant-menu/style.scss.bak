@@ -1,0 +1,293 @@
+/**
+ * Stili per il blocco Restaurant Menu
+ * Versione professionale con migliore leggibilità e stile moderno
+ * Aggiornato con supporto per spaziatura dinamica
+ */
+
+// Variabili
+$primary-color: #2c3e50;
+$accent-color: #e74c3c;
+$text-color: #333;
+$text-light: #777;
+$border-color: #e5e5e5;
+$background-light: #f9f9f9;
+$shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+$shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.12);
+$border-radius: 6px;
+$transition-speed: 0.3s;
+
+.erm-block-preview {
+    border: 1px solid $border-color;
+    padding: 20px;
+    background-color: $background-light;
+    border-radius: $border-radius;
+    
+    p {
+        text-align: center;
+        margin: 0;
+        padding: 20px;
+        font-style: italic;
+        color: $text-light;
+    }
+}
+
+// Stili per la versione frontend del menu
+.wp-block-easy-restaurant-menu-restaurant-menu {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    color: $text-color;
+    
+    .erm-menu-container {
+        margin-bottom: 3em;
+        box-sizing: border-box;
+        
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+    }
+    
+    .erm-section-title {
+        margin-bottom: 1.8em;
+        position: relative;
+        padding-bottom: 0.8em;
+        font-size: 2em;
+        font-weight: 700;
+        color: $primary-color;
+        text-align: center;
+        
+        &:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: $accent-color;
+        }
+    }
+    
+    // Stile comune per elementi del menu in entrambe le modalità
+    .erm-menu-item {
+        background-color: white;
+        border-radius: $border-radius;
+        box-shadow: $shadow-light;
+        transition: all $transition-speed ease;
+        overflow: hidden;
+        margin-bottom: 1.5em;
+        
+        &:hover {
+            box-shadow: $shadow-medium;
+        }
+        
+        .erm-item-image {
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid $border-color;
+            position: relative;
+            
+            // Stili di base che possono essere sovrascritti
+            margin: 0;
+            padding: 0;
+            
+            &.erm-image-square {
+                // Stili specifici per immagini quadrate
+                img {
+                    object-fit: cover;
+                }
+            }
+            
+            &.erm-image-rect {
+                // Stili specifici per immagini rettangolari
+                img {
+                    object-fit: contain;
+                }
+            }
+            
+            img {
+                width: 100%;
+                height: 100%;
+                transition: transform $transition-speed ease;
+                display: block;
+            }
+            
+            // Immagine mancante
+            &.erm-image-missing {
+                background-color: #f8f8f8;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                
+                &:before {
+                    content: '🍽️';
+                    font-size: 2rem;
+                    opacity: 0.2;
+                }
+            }
+        }
+        
+        .erm-item-content {
+            flex: 1;
+            // Padding base viene sovrascritto dalle impostazioni utente
+            padding: 15px;
+        }
+        
+        .erm-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+        }
+        
+        .erm-item-title {
+            font-weight: 600;
+            font-size: 1.25em;
+            color: $primary-color;
+            line-height: 1.3;
+            flex: 1;
+            min-width: 200px;
+            // Margini base che possono essere sovrascritti
+            margin: 0 0 0.3em 0;
+        }
+        
+        .erm-item-price {
+            font-weight: 700;
+            white-space: nowrap;
+            color: $accent-color;
+            font-size: 1.1em;
+            // Margini base che possono essere sovrascritti
+            margin-left: 1em;
+        }
+        
+        .erm-item-description {
+            font-size: 0.95em;
+            color: $text-light;
+            line-height: 1.6;
+            // Margini base che possono essere sovrascritti
+            margin: 0.6em 0 0 0;
+        }
+    }
+    
+    // Stile specifico per visualizzazione a griglia
+    .erm-display-grid {
+        .erm-menu-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        
+        .erm-menu-item {
+            display: block;
+            height: 100%;
+            
+            .erm-item-image {
+                width: 100%;
+                border-radius: $border-radius $border-radius 0 0;
+                border: none;
+                
+                &.erm-image-grid {
+                    // Classe specifica per immagini in griglia
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+    
+    // Stile specifico per visualizzazione a lista
+    .erm-display-list {
+        .erm-menu-item {
+            display: flex;
+            align-items: flex-start;
+            
+            .erm-item-image {
+                &.erm-image-list {
+                    // Classe specifica per immagini in lista
+                    margin-right: 20px;
+                }
+            }
+        }
+    }
+    
+    // Effetti hover migliorati
+    .erm-hover-zoom {
+        &:hover {
+            .erm-item-image img {
+                transform: scale(1.08);
+            }
+        }
+    }
+    
+    .erm-hover-shadow {
+        &:hover {
+            box-shadow: $shadow-medium;
+            transform: translateY(-3px);
+        }
+    }
+    
+    .erm-hover-border {
+        &:hover {
+            border-color: $accent-color !important;
+            border-width: 1px;
+            border-style: solid;
+        }
+    }
+}
+
+// Responsive
+@media screen and (max-width: 768px) {
+    .wp-block-easy-restaurant-menu-restaurant-menu {
+        .erm-section-title {
+            font-size: 1.6em;
+            
+            &:after {
+                width: 60px;
+            }
+        }
+        
+        .erm-display-grid {
+            .erm-menu-items {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .erm-display-list {
+            .erm-menu-item {
+                flex-direction: column;
+                
+                .erm-item-image {
+                    width: 100%;
+                    margin-right: 0;
+                    margin-bottom: 15px;
+                    border-radius: $border-radius $border-radius 0 0;
+                    
+                    &.erm-image-list {
+                        margin-right: 0;
+                        margin-bottom: 15px;
+                    }
+                }
+                
+                .erm-item-content {
+                    width: 100%;
+                }
+                
+                .erm-item-header {
+                    flex-direction: column;
+                    
+                    .erm-item-price {
+                        margin-left: 0;
+                        margin-top: 0.5em;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .wp-block-easy-restaurant-menu-restaurant-menu {
+        .erm-display-grid {
+            .erm-menu-items {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    }
+} 

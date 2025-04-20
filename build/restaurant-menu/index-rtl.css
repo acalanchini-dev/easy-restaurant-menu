@@ -3,7 +3,7 @@
   \********************************************************************************************************************************************************************************************************************************************************/
 /**
  * Stili per l'editor del blocco Restaurant Menu
- * Versione professionale aggiornata
+ * Versione professionale con design moderno e coerente
  */
 .wp-block-easy-restaurant-menu-restaurant-menu {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
@@ -17,32 +17,60 @@
 .wp-block-easy-restaurant-menu-restaurant-menu .block-editor-inspector-controls .components-panel__body .components-base-control__label {
   font-weight: 500;
   margin-bottom: 6px;
-  color: #2c3e50;
+  color: #1f2937;
 }
 .wp-block-easy-restaurant-menu-restaurant-menu .block-editor-inspector-controls .components-panel__body .components-toggle-control .components-base-control__field {
   margin-bottom: 8px;
 }
 .wp-block-easy-restaurant-menu-restaurant-menu .block-editor-inspector-controls .components-panel__body .components-panel__body-title .components-button {
-  color: #2c3e50;
+  color: #3474eb;
 }
 .wp-block-easy-restaurant-menu-restaurant-menu .block-editor-inspector-controls .components-panel__body .components-panel__body-title .components-button:hover {
-  color: #e74c3c;
+  color: #f5a623;
 }
-.wp-block-easy-restaurant-menu-restaurant-menu .erm-block-preview {
-  border: 1px solid #e5e5e5;
-  border-radius: 6px;
-  padding: 25px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-.wp-block-easy-restaurant-menu-restaurant-menu .erm-block-preview p {
-  text-align: center;
-  margin: 0;
+.wp-block-easy-restaurant-menu-restaurant-menu .erm-editor-placeholder {
+  border: 1px dashed rgba(0, 0, 0, 0.1);
   padding: 30px;
-  font-style: italic;
-  color: #777;
-  font-size: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  text-align: center;
+  margin: 20px 0;
 }
-.wp-block-easy-restaurant-menu-restaurant-menu.is-selected .erm-block-preview, .wp-block-easy-restaurant-menu-restaurant-menu.has-child-selected .erm-block-preview {
-  border-color: #e74c3c;
+.wp-block-easy-restaurant-menu-restaurant-menu .erm-editor-placeholder .erm-editor-placeholder-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  color: #3474eb;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .erm-editor-placeholder .erm-editor-placeholder-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 10px;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .erm-editor-placeholder .erm-editor-placeholder-description {
+  color: #6b7280;
+  font-size: 1rem;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .erm-editor-preview {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .erm-editor-preview:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.wp-block-easy-restaurant-menu-restaurant-menu.is-selected .erm-editor-preview, .wp-block-easy-restaurant-menu-restaurant-menu.is-selected .erm-editor-placeholder, .wp-block-easy-restaurant-menu-restaurant-menu.has-child-selected .erm-editor-preview, .wp-block-easy-restaurant-menu-restaurant-menu.has-child-selected .erm-editor-placeholder {
+  border-color: #3474eb;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .erm-menu-container img {
+  max-width: 100%;
+  height: auto;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .erm-menu-container .erm-section-title, .wp-block-easy-restaurant-menu-restaurant-menu .erm-menu-container .erm-menu-title {
+  margin-top: 0;
+}
+.wp-block-easy-restaurant-menu-restaurant-menu .erm-menu-container .erm-item-image {
+  line-height: 0;
 }

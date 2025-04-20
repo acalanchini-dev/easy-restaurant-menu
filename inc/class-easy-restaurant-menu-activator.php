@@ -26,9 +26,9 @@ class Easy_Restaurant_Menu_Activator {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		
-		// Tabella delle sezioni del menu
-		$table_sections = $wpdb->prefix . 'erm_sections';
-		$sql_sections = "CREATE TABLE $table_sections (
+		// Tabella dei menu
+		$table_menus = $wpdb->prefix . 'erm_menus';
+		$sql_menus = "CREATE TABLE $table_menus (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			nome VARCHAR(255) NOT NULL,
 			descrizione TEXT,
@@ -36,6 +36,20 @@ class Easy_Restaurant_Menu_Activator {
 			status VARCHAR(20) DEFAULT 'publish' NOT NULL,
 			data_creazione DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 			PRIMARY KEY  (id)
+		) $charset_collate;";
+		
+		// Tabella delle sezioni del menu
+		$table_sections = $wpdb->prefix . 'erm_sections';
+		$sql_sections = "CREATE TABLE $table_sections (
+			id mediumint(9) NOT NULL AUTO_INCREMENT,
+			menu_id mediumint(9) DEFAULT 0 NOT NULL,
+			nome VARCHAR(255) NOT NULL,
+			descrizione TEXT,
+			ordine INT(11) DEFAULT 0 NOT NULL,
+			status VARCHAR(20) DEFAULT 'publish' NOT NULL,
+			data_creazione DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+			PRIMARY KEY  (id),
+			KEY menu_id (menu_id)
 		) $charset_collate;";
 		
 		// Tabella degli elementi del menu
@@ -55,17 +69,73 @@ class Easy_Restaurant_Menu_Activator {
 		) $charset_collate;";
 		
 		require_once(\ABSPATH . 'wp-admin/includes/upgrade.php');
+		dbDelta($sql_menus);
 		dbDelta($sql_sections);
 		dbDelta($sql_items);
 		
-		// Inserisci dati di esempio nella tabella delle sezioni solo se è vuota
-		$count = $wpdb->get_var("SELECT COUNT(*) FROM $table_sections");
+		// Verifica se il plugin è già stato attivato in precedenza e ha già dati
+		$count_sections = $wpdb->get_var("SELECT COUNT(*) FROM $table_sections");
+		$count_menus = $wpdb->get_var("SELECT COUNT(*) FROM $table_menus");
 		
-		if ($count == 0) {
+		// Migrazione: se ci sono sezioni ma non menu, creiamo un menu predefinito
+		if ($count_sections > 0 && $count_menus == 0) {
+			// Inserisci il menu principale predefinito
+			$wpdb->insert(
+				$table_menus,
+				array(
+					'nome' => 'Menu Principale',
+					'descrizione' => 'Menu predefinito creato durante la migrazione',
+					'ordine' => 1,
+					'status' => 'publish'
+				)
+			);
+			
+			$default_menu_id = $wpdb->insert_id;
+			
+			// Associa tutte le sezioni esistenti al menu predefinito
+			$wpdb->query(
+				$wpdb->prepare(
+					"UPDATE $table_sections SET menu_id = %d WHERE menu_id = 0",
+					$default_menu_id
+				)
+			);
+			
+			// Registra l'operazione di migrazione nel log
+			if (function_exists('error_log')) {
+				error_log('Easy Restaurant Menu: Migrazione completata. Menu predefinito creato con ID: ' . $default_menu_id . ' e tutte le sezioni esistenti collegate ad esso.');
+			}
+		} else if ($count_menus == 0) {
+			// Se non ci sono menu e nemmeno sezioni, creiamo i dati di esempio
+			
+			// Crea il menu principale predefinito
+			$wpdb->insert(
+				$table_menus,
+				array(
+					'nome' => 'Menu Principale',
+					'descrizione' => 'Il nostro menu completo',
+					'ordine' => 1,
+					'status' => 'publish'
+				)
+			);
+			
+			$main_menu_id = $wpdb->insert_id;
+			
+			// Crea un secondo menu di esempio
+			$wpdb->insert(
+				$table_menus,
+				array(
+					'nome' => 'Menu del Giorno',
+					'descrizione' => 'Specialità disponibili oggi',
+					'ordine' => 2,
+					'status' => 'publish'
+				)
+			);
+			
 			// Prima inseriamo tutte le sezioni per avere tutti gli ID generati
 			$wpdb->insert(
 				$table_sections,
 				array(
+					'menu_id' => $main_menu_id,
 					'nome' => 'Antipasti',
 					'descrizione' => 'Una selezione dei nostri migliori antipasti',
 					'ordine' => 1,
@@ -78,6 +148,7 @@ class Easy_Restaurant_Menu_Activator {
 			$wpdb->insert(
 				$table_sections,
 				array(
+					'menu_id' => $main_menu_id,
 					'nome' => 'Primi Piatti',
 					'descrizione' => 'Pasta e risotti della tradizione italiana',
 					'ordine' => 2,
@@ -90,6 +161,7 @@ class Easy_Restaurant_Menu_Activator {
 			$wpdb->insert(
 				$table_sections,
 				array(
+					'menu_id' => $main_menu_id,
 					'nome' => 'Secondi Piatti',
 					'descrizione' => 'Carni e pesci selezionati',
 					'ordine' => 3,
@@ -100,6 +172,7 @@ class Easy_Restaurant_Menu_Activator {
 			$wpdb->insert(
 				$table_sections,
 				array(
+					'menu_id' => $main_menu_id,
 					'nome' => 'Dessert',
 					'descrizione' => 'Dolci fatti in casa',
 					'ordine' => 4,

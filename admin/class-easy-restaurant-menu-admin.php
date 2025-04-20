@@ -98,6 +98,15 @@ class Easy_Restaurant_Menu_Admin {
 		
 		add_submenu_page(
 			'erm-dashboard',
+			__('Menu', 'easy-restaurant-menu'),
+			__('Menu', 'easy-restaurant-menu'),
+			'manage_options',
+			'erm-menus',
+			[$this, 'display_menus_page']
+		);
+		
+		add_submenu_page(
+			'erm-dashboard',
 			__('Sezioni', 'easy-restaurant-menu'),
 			__('Sezioni', 'easy-restaurant-menu'),
 			'manage_options',
@@ -161,6 +170,15 @@ class Easy_Restaurant_Menu_Admin {
 	}
 
 	/**
+	 * Visualizza la pagina dei menu
+	 *
+	 * @since    1.0.0
+	 */
+	public function display_menus_page(): void {
+		Easy_Restaurant_Menu_Helper::print_view('admin/partials/menus-page.php');
+	}
+
+	/**
 	 * Ottiene la pagina delle opzioni
 	 * 
 	 * Utilizzato dalla classe Easy_Restaurant_Menu_Options per mostrare la pagina delle opzioni
@@ -177,12 +195,113 @@ class Easy_Restaurant_Menu_Admin {
 	 * @since    1.0.0
 	 */
 	public function register_ajax_handlers(): void {
+		add_action('wp_ajax_erm_save_menu', [$this, 'ajax_save_menu']);
+		add_action('wp_ajax_erm_delete_menu', [$this, 'ajax_delete_menu']);
 		add_action('wp_ajax_erm_save_section', [$this, 'ajax_save_section']);
 		add_action('wp_ajax_erm_delete_section', [$this, 'ajax_delete_section']);
 		add_action('wp_ajax_erm_save_item', [$this, 'ajax_save_item']);
 		add_action('wp_ajax_erm_delete_item', [$this, 'ajax_delete_item']);
 		add_action('wp_ajax_erm_update_order', [$this, 'ajax_update_order']);
 		add_action('wp_ajax_erm_get_image', [$this, 'ajax_get_image']);
+	}
+	
+	/**
+	 * Salva un menu (AJAX)
+	 *
+	 * @since    1.0.0
+	 */
+	public function ajax_save_menu(): void {
+		// Controllo di sicurezza
+		check_ajax_referer('erm_admin_nonce', 'nonce');
+		
+		if (!current_user_can('manage_options')) {
+			wp_send_json_error(['message' => __('Permessi insufficienti', 'easy-restaurant-menu')]);
+			return;
+		}
+		
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'erm_menus';
+		
+		$menu_id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+		$nome = sanitize_text_field($_POST['nome']);
+		$descrizione = sanitize_textarea_field($_POST['descrizione']);
+		$ordine = isset($_POST['ordine']) ? intval($_POST['ordine']) : 0;
+		$status = sanitize_text_field($_POST['status']);
+		
+		$data = [
+			'nome' => $nome,
+			'descrizione' => $descrizione,
+			'ordine' => $ordine,
+			'status' => $status
+		];
+		
+		$format = ['%s', '%s', '%d', '%s'];
+		
+		if ($menu_id > 0) {
+			// Aggiornamento
+			$wpdb->update($table_name, $data, ['id' => $menu_id], $format, ['%d']);
+			$message = __('Menu aggiornato con successo', 'easy-restaurant-menu');
+		} else {
+			// Inserimento
+			$wpdb->insert($table_name, $data, $format);
+			$menu_id = $wpdb->insert_id;
+			$message = __('Menu creato con successo', 'easy-restaurant-menu');
+		}
+		
+		wp_send_json_success([
+			'id' => $menu_id,
+			'message' => $message
+		]);
+	}
+	
+	/**
+	 * Elimina un menu (AJAX)
+	 *
+	 * @since    1.0.0
+	 */
+	public function ajax_delete_menu(): void {
+		// Controllo di sicurezza
+		check_ajax_referer('erm_admin_nonce', 'nonce');
+		
+		if (!current_user_can('manage_options')) {
+			wp_send_json_error(['message' => __('Permessi insufficienti', 'easy-restaurant-menu')]);
+			return;
+		}
+		
+		global $wpdb;
+		$menu_id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+		
+		if ($menu_id <= 0) {
+			wp_send_json_error(['message' => __('ID menu non valido', 'easy-restaurant-menu')]);
+			return;
+		}
+		
+		// Prima eliminiamo tutti gli elementi associati alle sezioni di questo menu
+		$table_sections = $wpdb->prefix . 'erm_sections';
+		$table_items = $wpdb->prefix . 'erm_items';
+		
+		// Ottieni tutte le sezioni di questo menu
+		$sections = $wpdb->get_col($wpdb->prepare("SELECT id FROM $table_sections WHERE menu_id = %d", $menu_id));
+		
+		// Se ci sono sezioni, elimina tutti gli elementi associati
+		if (!empty($sections)) {
+			$sections_placeholders = implode(',', array_fill(0, count($sections), '%d'));
+			$wpdb->query($wpdb->prepare("DELETE FROM $table_items WHERE section_id IN ($sections_placeholders)", $sections));
+			
+			// Ora elimina le sezioni
+			$wpdb->delete($table_sections, ['menu_id' => $menu_id], ['%d']);
+		}
+		
+		// Infine elimina il menu
+		$table_menus = $wpdb->prefix . 'erm_menus';
+		$result = $wpdb->delete($table_menus, ['id' => $menu_id], ['%d']);
+		
+		if ($result === false) {
+			wp_send_json_error(['message' => __('Errore durante l\'eliminazione del menu', 'easy-restaurant-menu')]);
+			return;
+		}
+		
+		wp_send_json_success(['message' => __('Menu eliminato con successo', 'easy-restaurant-menu')]);
 	}
 	
 	/**
@@ -203,19 +322,21 @@ class Easy_Restaurant_Menu_Admin {
 		$table_name = $wpdb->prefix . 'erm_sections';
 		
 		$section_id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+		$menu_id = isset($_POST['menu_id']) ? intval($_POST['menu_id']) : 0;
 		$nome = sanitize_text_field($_POST['nome']);
 		$descrizione = sanitize_textarea_field($_POST['descrizione']);
 		$ordine = isset($_POST['ordine']) ? intval($_POST['ordine']) : 0;
 		$status = sanitize_text_field($_POST['status']);
 		
 		$data = [
+			'menu_id' => $menu_id,
 			'nome' => $nome,
 			'descrizione' => $descrizione,
 			'ordine' => $ordine,
 			'status' => $status
 		];
 		
-		$format = ['%s', '%s', '%d', '%s'];
+		$format = ['%d', '%s', '%s', '%d', '%s'];
 		
 		if ($section_id > 0) {
 			// Aggiornamento
@@ -363,7 +484,7 @@ class Easy_Restaurant_Menu_Admin {
 	}
 	
 	/**
-	 * Aggiorna l'ordine degli elementi (AJAX)
+	 * Aggiorna l'ordine (AJAX)
 	 *
 	 * @since    1.0.0
 	 */
@@ -378,28 +499,58 @@ class Easy_Restaurant_Menu_Admin {
 		
 		global $wpdb;
 		
-		$items = isset($_POST['items']) ? $_POST['items'] : [];
-		$type = sanitize_text_field($_POST['type']); // 'sections' o 'items'
-		
-		if (empty($items) || !is_array($items)) {
-			wp_send_json_error(['message' => __('Nessun elemento da ordinare', 'easy-restaurant-menu')]);
+		// Verifica che siano stati forniti gli elementi
+		if (!isset($_POST['items']) || !is_array($_POST['items'])) {
+			wp_send_json_error(['message' => __('Nessun elemento fornito', 'easy-restaurant-menu')]);
 			return;
 		}
 		
-		$table_name = $wpdb->prefix . ($type === 'sections' ? 'erm_sections' : 'erm_items');
+		// Determina quale tabella aggiornare in base al tipo
+		$type = sanitize_text_field($_POST['type']);
+		$table_name = '';
 		
-		// Aggiorna l'ordine di ciascun elemento
-		foreach ($items as $order => $id) {
-			$wpdb->update(
+		switch ($type) {
+			case 'menus':
+				$table_name = $wpdb->prefix . 'erm_menus';
+				$success_message = __('Ordine dei menu aggiornato', 'easy-restaurant-menu');
+				break;
+			case 'sections':
+				$table_name = $wpdb->prefix . 'erm_sections';
+				$success_message = __('Ordine delle sezioni aggiornato', 'easy-restaurant-menu');
+				break;
+			case 'items':
+				$table_name = $wpdb->prefix . 'erm_items';
+				$success_message = __('Ordine degli elementi aggiornato', 'easy-restaurant-menu');
+				break;
+			default:
+				wp_send_json_error(['message' => __('Tipo di ordinamento non valido', 'easy-restaurant-menu')]);
+				return;
+		}
+		
+		// Aggiorna l'ordine degli elementi
+		$items = array_map('intval', $_POST['items']);
+		$success = true;
+		
+		foreach ($items as $index => $id) {
+			$result = $wpdb->update(
 				$table_name,
-				['ordine' => intval($order)],
-				['id' => intval($id)],
+				['ordine' => $index],
+				['id' => $id],
 				['%d'],
 				['%d']
 			);
+			
+			if ($result === false) {
+				$success = false;
+			}
 		}
 		
-		wp_send_json_success(['message' => __('Ordine aggiornato con successo', 'easy-restaurant-menu')]);
+		if (!$success) {
+			wp_send_json_error(['message' => __('Errore durante l\'aggiornamento dell\'ordine', 'easy-restaurant-menu')]);
+			return;
+		}
+		
+		wp_send_json_success(['message' => $success_message]);
 	}
 
 	/**

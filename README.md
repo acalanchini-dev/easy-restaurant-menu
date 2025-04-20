@@ -15,6 +15,8 @@ Easy Restaurant Menu è un plugin WordPress che permette di creare sezioni di me
 - Personalizzazione completa dei colori, bordi, ombre e spaziature
 - Effetti hover per una migliore esperienza utente
 - Responsive design per una corretta visualizzazione su tutti i dispositivi
+- Sistema di caching avanzato tramite Transient API per prestazioni ottimali
+- Statistiche di cache e opzioni di configurazione personalizzabili
 
 ## Installazione
 
@@ -50,6 +52,25 @@ Easy Restaurant Menu è un plugin WordPress che permette di creare sezioni di me
    - Spaziatura tra gli elementi
    - Effetti al passaggio del mouse
 
+### Configurazione del caching
+
+1. Dal pannello amministrativo, vai su "Menu Ristorante" → "Impostazioni" → tab "Cache"
+2. Puoi:
+   - Abilitare/disabilitare il sistema di caching
+   - Configurare la durata della cache (da 5 minuti a 1 settimana)
+   - Visualizzare le statistiche di utilizzo della cache
+   - Svuotare manualmente la cache quando necessario
+
+## Prestazioni e Ottimizzazioni
+
+Il plugin include un sistema di caching avanzato basato sulla Transient API di WordPress per garantire prestazioni ottimali anche con menu complessi o siti ad alto traffico:
+
+- Riduzione significativa del carico sul database
+- Miglioramento dei tempi di risposta dell'applicazione
+- Caching intelligente con invalidazione automatica quando i dati vengono modificati
+- Monitoraggio delle prestazioni tramite hit ratio e statistiche
+- Supporto per installazioni con volumi elevati di menu e articoli
+
 ## Requisiti
 
 - WordPress 5.9 o superiore
@@ -62,6 +83,7 @@ Il plugin è sviluppato utilizzando:
 - React e JavaScript per l'interfaccia del blocco Gutenberg
 - SCSS per gli stili
 - WordPress Block API
+- Transient API per il sistema di caching
 
 Per gli sviluppatori che desiderano contribuire:
 
