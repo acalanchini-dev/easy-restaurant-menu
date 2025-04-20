@@ -26,40 +26,96 @@ Easy Restaurant Menu è un plugin WordPress che permette di creare sezioni di me
 
 ## Utilizzo
 
-### Creazione di sezioni e piatti
+### Panoramica della struttura dei menu
 
-1. Dal pannello amministrativo, vai su "Menu Ristorante" → "Sezioni" per creare le categorie del tuo menu (antipasti, primi, secondi, etc.)
-2. Vai su "Menu Ristorante" → "Piatti" per aggiungere i singoli elementi alle sezioni
-3. Per ogni piatto puoi specificare:
-   - Titolo
-   - Descrizione
-   - Prezzo
-   - Immagine
+Il plugin organizza i menu di ristorante in tre livelli gerarchici:
+- **Menu**: contenitore principale che può raggruppare più sezioni
+- **Sezioni**: categorie all'interno di un menu (es. antipasti, primi, secondi)
+- **Piatti**: singoli elementi all'interno di una sezione
+
+### Creazione e gestione dei menu
+
+1. Dal pannello amministrativo, vai su "Menu Ristorante" → "Menu"
+2. Clicca su "Aggiungi nuovo menu" per creare un menu principale
+3. Assegna un nome descrittivo (es. "Menu del giorno", "Menu serale", "Menu festivo")
+4. Puoi creare più menu e attivarli/disattivarli secondo necessità
+
+### Creazione e gestione delle sezioni
+
+1. Dal pannello amministrativo, vai su "Menu Ristorante" → "Sezioni"
+2. Clicca su "Aggiungi nuova sezione" per creare una categoria
+3. Compila i campi:
+   - Nome della sezione (es. "Antipasti", "Primi piatti")
+   - Descrizione (opzionale)
+   - Menu di appartenenza
+   - Ordine di visualizzazione
+   - Immagine rappresentativa (opzionale)
+
+### Creazione e gestione dei piatti
+
+1. Dal pannello amministrativo, vai su "Menu Ristorante" → "Piatti"
+2. Clicca su "Aggiungi nuovo piatto" per inserire un elemento
+3. Compila i campi:
+   - Titolo del piatto
+   - Descrizione dettagliata
+   - Prezzo (con possibilità di specificare prezzi variabili)
+   - Immagine del piatto
    - Sezione di appartenenza
    - Ordine di visualizzazione
+   - Attributi speciali (vegetariano, piccante, ecc.)
+   - Stato di disponibilità
 
 ### Inserimento del menu in una pagina
 
 1. Crea o modifica una pagina dove vuoi mostrare il menu
 2. Aggiungi il blocco "Menu Ristorante" 
-3. Seleziona la sezione da visualizzare dal pannello laterale
-4. Personalizza lo stile secondo le tue preferenze:
-   - Tipo di visualizzazione (griglia o lista)
-   - Numero di colonne (per la visualizzazione a griglia)
-   - Mostra/nascondi immagini, prezzi, descrizioni
-   - Colori per titoli, prezzi, descrizioni e sfondi
-   - Bordi, raggi degli angoli e ombre
-   - Spaziatura tra gli elementi
-   - Effetti al passaggio del mouse
+3. Configura le opzioni nel pannello laterale:
+   - Seleziona il menu completo o specifiche sezioni da visualizzare
+   - Scegli l'ordinamento degli elementi (manuale, alfabetico, per prezzo)
+   - Imposta i filtri di visualizzazione (es. solo piatti disponibili)
+
+### Personalizzazione dell'aspetto
+
+Personalizza lo stile secondo le tue preferenze:
+- **Layout**:
+  - Tipo di visualizzazione (griglia o lista)
+  - Numero di colonne (per la visualizzazione a griglia)
+  - Densità degli elementi (compatta, normale, spaziosa)
+- **Contenuti**:
+  - Mostra/nascondi immagini, prezzi, descrizioni
+  - Lunghezza massima delle descrizioni
+  - Formato di visualizzazione dei prezzi
+- **Stile**:
+  - Colori per titoli, prezzi, descrizioni e sfondi
+  - Tipografia (famiglia di font, dimensione, peso)
+  - Bordi, raggi degli angoli e ombre
+  - Spaziatura tra gli elementi
+- **Interattività**:
+  - Effetti al passaggio del mouse
+  - Animazioni di caricamento
+  - Comportamento responsive
 
 ### Configurazione del caching
 
 1. Dal pannello amministrativo, vai su "Menu Ristorante" → "Impostazioni" → tab "Cache"
-2. Puoi:
-   - Abilitare/disabilitare il sistema di caching
-   - Configurare la durata della cache (da 5 minuti a 1 settimana)
-   - Visualizzare le statistiche di utilizzo della cache
-   - Svuotare manualmente la cache quando necessario
+2. Configura le opzioni di caching:
+   - Abilita/disabilita il sistema di caching
+   - Imposta la durata della cache (da 5 minuti a 1 settimana)
+   - Visualizza le statistiche di utilizzo:
+     - Hit ratio (percentuale di richieste servite dalla cache)
+     - Cache hits (richieste servite dalla cache)
+     - Cache misses (richieste non trovate in cache)
+   - Gestisci la cache:
+     - Svuota manualmente la cache quando necessario
+     - Abilita/disabilita l'invalidazione automatica
+     - Configura gli eventi che invalidano la cache
+
+### Utilizzo avanzato
+
+1. **Shortcode**: Puoi utilizzare lo shortcode `[restaurant_menu id="X" section="Y"]` per inserire menu in qualsiasi posizione supportata
+2. **Template PHP**: Per gli sviluppatori di temi, è possibile utilizzare la funzione `erm_display_menu($args)` nei template
+3. **REST API**: Accedi ai dati dei menu tramite gli endpoint REST per integrazioni personalizzate
+4. **Hook e filtri**: Personalizza il comportamento del plugin utilizzando i numerosi hook disponibili
 
 ## Prestazioni e Ottimizzazioni
 
