@@ -79,6 +79,11 @@ class Easy_Restaurant_Menu_Core extends Easy_Restaurant_Menu_Loader {
 		 * The class responsible for defining internationalization functionality
 		 */
 		Easy_Restaurant_Menu_Helper::using('inc/class-easy-restaurant-menu-i18n.php');
+		
+		/**
+		 * La classe responsabile della gestione ottimizzata degli asset
+		 */
+		Easy_Restaurant_Menu_Helper::using('inc/class-easy-restaurant-menu-assets.php');
 
 	}
 
@@ -188,8 +193,12 @@ class Easy_Restaurant_Menu_Core extends Easy_Restaurant_Menu_Loader {
 		Easy_Restaurant_Menu_Helper::using('public/class-easy-restaurant-menu-public.php');
 		$plugin_public = new Easy_Restaurant_Menu_Public();
 
+		// Registra ma non carica gli stili e gli script pubblici
 		$this->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		
+		// Inizializza la gestione degli asset ottimizzata
+		Easy_Restaurant_Menu_Assets::init();
 
 	}
 

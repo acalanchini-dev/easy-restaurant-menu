@@ -42,6 +42,31 @@ if (isset($_POST['erm_save_options']) && check_admin_referer('erm_settings_group
     $style_preset = sanitize_key($_POST['erm_style_preset']);
     update_option('erm_style_preset', $style_preset);
     
+    // Salva opzioni per il caching
+    $enable_caching = isset($_POST['erm_enable_caching']) ? '1' : '0';
+    update_option('erm_enable_caching', $enable_caching);
+    
+    if (isset($_POST['erm_cache_expiration'])) {
+        $cache_expiration = absint($_POST['erm_cache_expiration']);
+        update_option('erm_cache_expiration', $cache_expiration);
+    }
+    
+    // Salva le opzioni di performance
+    $enable_asset_optimization = isset($_POST['erm_enable_asset_optimization']) ? '1' : '0';
+    update_option('erm_enable_asset_optimization', $enable_asset_optimization);
+    
+    $enable_critical_css = isset($_POST['erm_enable_critical_css']) ? '1' : '0';
+    update_option('erm_enable_critical_css', $enable_critical_css);
+    
+    $enable_conditional_loading = isset($_POST['erm_enable_conditional_loading']) ? '1' : '0';
+    update_option('erm_enable_conditional_loading', $enable_conditional_loading);
+    
+    // Salva la tab attiva
+    if (isset($_POST['erm_active_tab'])) {
+        $active_tab = sanitize_text_field($_POST['erm_active_tab']);
+        update_option('erm_active_tab', $active_tab);
+    }
+    
     // Mostra messaggio di conferma
     $message = __('Impostazioni salvate con successo', 'easy-restaurant-menu');
     $message_class = 'notice-success';
@@ -73,6 +98,9 @@ $cache_stats = EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Cache::get_stats();
 // Opzioni di caching
 $enable_caching = get_option('erm_enable_caching', true);
 $cache_expiration = get_option('erm_cache_expiration', 3600);
+
+// Recupera l'ultima tab attiva
+$active_tab = get_option('erm_active_tab', 'tab-general');
 ?>
 
 <div class="wrap erm-admin">
@@ -87,16 +115,18 @@ $cache_expiration = get_option('erm_cache_expiration', 3600);
 	<div class="erm-options-container">
 		<form method="post" action="">
 			<?php wp_nonce_field('erm_settings_group', 'erm_settings_nonce'); ?>
+			<input type="hidden" name="erm_active_tab" id="erm_active_tab" value="<?php echo esc_attr($active_tab); ?>">
 			
 			<h2 class="nav-tab-wrapper">
-				<a href="#tab-general" class="nav-tab nav-tab-active"><?php echo esc_html__('Generale', 'easy-restaurant-menu'); ?></a>
-				<a href="#tab-currency" class="nav-tab"><?php echo esc_html__('Formato Prezzo', 'easy-restaurant-menu'); ?></a>
-				<a href="#tab-style" class="nav-tab"><?php echo esc_html__('Stile', 'easy-restaurant-menu'); ?></a>
-				<a href="#tab-cache" class="nav-tab"><?php echo esc_html__('Cache', 'easy-restaurant-menu'); ?></a>
-				<a href="#tab-avanzate" class="nav-tab"><?php echo esc_html__('Avanzate', 'easy-restaurant-menu'); ?></a>
+				<a href="#tab-general" class="nav-tab <?php echo $active_tab === 'tab-general' ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__('Generale', 'easy-restaurant-menu'); ?></a>
+				<a href="#tab-currency" class="nav-tab <?php echo $active_tab === 'tab-currency' ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__('Formato Prezzo', 'easy-restaurant-menu'); ?></a>
+				<a href="#tab-style" class="nav-tab <?php echo $active_tab === 'tab-style' ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__('Stile', 'easy-restaurant-menu'); ?></a>
+				<a href="#tab-cache" class="nav-tab <?php echo $active_tab === 'tab-cache' ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__('Cache', 'easy-restaurant-menu'); ?></a>
+				<a href="#tab-performance" class="nav-tab <?php echo $active_tab === 'tab-performance' ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__('Performance', 'easy-restaurant-menu'); ?></a>
+				<a href="#tab-avanzate" class="nav-tab <?php echo $active_tab === 'tab-avanzate' ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__('Avanzate', 'easy-restaurant-menu'); ?></a>
 			</h2>
 			
-			<div id="tab-general" class="tab-content active">
+			<div id="tab-general" class="tab-content <?php echo $active_tab === 'tab-general' ? 'active' : ''; ?>">
 				<table class="form-table">
 					<tbody>
 						<tr>
@@ -135,7 +165,7 @@ $cache_expiration = get_option('erm_cache_expiration', 3600);
 				</table>
 			</div>
 			
-			<div id="tab-currency" class="tab-content">
+			<div id="tab-currency" class="tab-content <?php echo $active_tab === 'tab-currency' ? 'active' : ''; ?>">
 				<table class="form-table">
 					<tbody>
 						<tr>
@@ -228,7 +258,7 @@ $cache_expiration = get_option('erm_cache_expiration', 3600);
 				</table>
 			</div>
 			
-			<div id="tab-style" class="tab-content">
+			<div id="tab-style" class="tab-content <?php echo $active_tab === 'tab-style' ? 'active' : ''; ?>">
 				<h3><?php echo esc_html__('Preset di Stile', 'easy-restaurant-menu'); ?></h3>
 				<p class="description"><?php echo esc_html__('Seleziona un preset di stile predefinito per il tuo menu. Questi preset definiscono colori, spaziature e allineamenti del testo.', 'easy-restaurant-menu'); ?></p>
 				
@@ -278,7 +308,7 @@ $cache_expiration = get_option('erm_cache_expiration', 3600);
 				</div>
 			</div>
 			
-			<div id="tab-cache" class="tab-content">
+			<div id="tab-cache" class="tab-content <?php echo $active_tab === 'tab-cache' ? 'active' : ''; ?>">
 				<table class="form-table">
 					<tbody>
 						<tr>
@@ -368,7 +398,67 @@ $cache_expiration = get_option('erm_cache_expiration', 3600);
 				</table>
 			</div>
 			
-			<div id="tab-avanzate" class="tab-content">
+			<div id="tab-performance" class="tab-content <?php echo $active_tab === 'tab-performance' ? 'active' : ''; ?>">
+				<h3><?php echo esc_html__('Ottimizzazione delle Performance', 'easy-restaurant-menu'); ?></h3>
+				<p class="description"><?php echo esc_html__('Queste opzioni permettono di ottimizzare il caricamento delle risorse per migliorare le prestazioni del sito.', 'easy-restaurant-menu'); ?></p>
+				
+				<table class="form-table">
+					<tbody>
+						<!-- Ottimizzazione Asset -->
+						<tr>
+							<th scope="row">
+								<label for="erm_enable_asset_optimization"><?php echo esc_html__('Ottimizzazione Asset', 'easy-restaurant-menu'); ?></label>
+							</th>
+							<td>
+								<?php $asset_optimization = get_option('erm_enable_asset_optimization', true); ?>
+								<input type="checkbox" id="erm_enable_asset_optimization" name="erm_enable_asset_optimization" value="1" <?php checked(1, $asset_optimization); ?>>
+								<p class="description">
+									<?php echo esc_html__('Attiva l\'ottimizzazione degli asset (script e stili separati per funzionalità)', 'easy-restaurant-menu'); ?>
+								</p>
+								<p class="description">
+									<?php echo esc_html__('Questa opzione divide gli script e gli stili in componenti più piccoli e specifici per caricare solo ciò che è necessario.', 'easy-restaurant-menu'); ?>
+								</p>
+							</td>
+						</tr>
+						
+						<!-- CSS Critico Inline -->
+						<tr>
+							<th scope="row">
+								<label for="erm_enable_critical_css"><?php echo esc_html__('CSS Critico Inline', 'easy-restaurant-menu'); ?></label>
+							</th>
+							<td>
+								<?php $critical_css = get_option('erm_enable_critical_css', true); ?>
+								<input type="checkbox" id="erm_enable_critical_css" name="erm_enable_critical_css" value="1" <?php checked(1, $critical_css); ?>>
+								<p class="description">
+									<?php echo esc_html__('Inserisci il CSS critico inline nell\'head della pagina', 'easy-restaurant-menu'); ?>
+								</p>
+								<p class="description">
+									<?php echo esc_html__('Questa opzione inserisce gli stili critici necessari per il rendering iniziale direttamente nell\'head della pagina per evitare il FOUC (Flash of Unstyled Content).', 'easy-restaurant-menu'); ?>
+								</p>
+							</td>
+						</tr>
+						
+						<!-- Caricamento Condizionale -->
+						<tr>
+							<th scope="row">
+								<label for="erm_enable_conditional_loading"><?php echo esc_html__('Caricamento Condizionale', 'easy-restaurant-menu'); ?></label>
+							</th>
+							<td>
+								<?php $conditional_loading = get_option('erm_enable_conditional_loading', true); ?>
+								<input type="checkbox" id="erm_enable_conditional_loading" name="erm_enable_conditional_loading" value="1" <?php checked(1, $conditional_loading); ?>>
+								<p class="description">
+									<?php echo esc_html__('Carica gli asset solo nelle pagine che contengono menu', 'easy-restaurant-menu'); ?>
+								</p>
+								<p class="description">
+									<?php echo esc_html__('Questa opzione carica gli script e gli stili solo nelle pagine che contengono blocchi o shortcode del menu ristorante.', 'easy-restaurant-menu'); ?>
+								</p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div id="tab-avanzate" class="tab-content <?php echo $active_tab === 'tab-avanzate' ? 'active' : ''; ?>">
 				<table class="form-table">
 					<tbody>
 						<tr>
@@ -389,27 +479,6 @@ $cache_expiration = get_option('erm_cache_expiration', 3600);
 				<input type="submit" name="erm_save_options" class="button button-primary" value="<?php echo esc_attr__('Salva Impostazioni', 'easy-restaurant-menu'); ?>">
 			</p>
 		</form>
-	</div>
-	
-	<div class="erm-info-box">
-		<h3><?php echo esc_html__('Come usare il shortcode', 'easy-restaurant-menu'); ?></h3>
-		<p><?php echo esc_html__('Puoi usare lo shortcode seguente per visualizzare il menu nel tuo sito:', 'easy-restaurant-menu'); ?></p>
-		<pre>[restaurant_menu sections="all" layout="list"]</pre>
-		
-		<h4><?php echo esc_html__('Parametri disponibili:', 'easy-restaurant-menu'); ?></h4>
-		<ul>
-			<li><code>sections</code>: <?php echo esc_html__('IDs delle sezioni da visualizzare, separati da virgola, o "all" per tutte', 'easy-restaurant-menu'); ?></li>
-			<li><code>layout</code>: <?php echo esc_html__('Il layout del menu (list, grid, compact)', 'easy-restaurant-menu'); ?></li>
-			<li><code>show_images</code>: <?php echo esc_html__('Mostra o nascondi le immagini (yes/no, default: yes)', 'easy-restaurant-menu'); ?></li>
-			<li><code>show_description</code>: <?php echo esc_html__('Mostra o nascondi le descrizioni (yes/no, default: yes)', 'easy-restaurant-menu'); ?></li>
-		</ul>
-		
-		<h3><?php echo esc_html__('Esempi', 'easy-restaurant-menu'); ?></h3>
-		<p><?php echo esc_html__('Visualizza solo le sezioni con ID 2 e 4 in layout griglia:', 'easy-restaurant-menu'); ?></p>
-		<pre>[restaurant_menu sections="2,4" layout="grid"]</pre>
-		
-		<p><?php echo esc_html__('Visualizza tutte le sezioni senza descrizioni:', 'easy-restaurant-menu'); ?></p>
-		<pre>[restaurant_menu sections="all" show_description="no"]</pre>
 	</div>
 </div>
 
@@ -563,7 +632,11 @@ jQuery(document).ready(function($) {
 		
 		// Aggiungi la classe active al tab cliccato e al contenuto corrispondente
 		$(this).addClass('nav-tab-active');
-		$($(this).attr('href')).addClass('active');
+		var tabId = $(this).attr('href');
+		$(tabId).addClass('active');
+		
+		// Aggiorna il campo nascosto con l'ID della tab attiva (senza il #)
+		$('#erm_active_tab').val(tabId.substring(1));
 	});
 	
 	// Aggiorna l'anteprima del prezzo quando cambiano i campi

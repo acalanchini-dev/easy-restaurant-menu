@@ -24,6 +24,7 @@ class Easy_Restaurant_Menu_Options {
 		// L'opzione del menu è già registrata nella classe Easy_Restaurant_Menu_Admin
 		// Quindi qui registriamo solo le impostazioni
 		add_action( 'admin_init', [ $this, 'easy_restaurant_menu_register_settings' ] );
+		add_action( 'admin_init', [ $this, 'register_performance_options' ] );
 	}
 
 	/**
@@ -185,6 +186,72 @@ class Easy_Restaurant_Menu_Options {
 				'default' => 0
 			]
 		);
+		
+		// Nuove impostazioni per l'ottimizzazione delle performance
+		register_setting(
+			'erm_settings_group',
+			'erm_enable_asset_optimization',
+			[
+				'type' => 'boolean',
+				'default' => true,
+				'sanitize_callback' => 'rest_sanitize_boolean'
+			]
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_enable_critical_css',
+			[
+				'type' => 'boolean',
+				'default' => true,
+				'sanitize_callback' => 'rest_sanitize_boolean'
+			]
+		);
+		
+		register_setting(
+			'erm_settings_group',
+			'erm_enable_conditional_loading',
+			[
+				'type' => 'boolean',
+				'default' => true,
+				'sanitize_callback' => 'rest_sanitize_boolean'
+			]
+		);
+		
+		// Aggiungi sezione per le impostazioni di ottimizzazione
+		add_settings_section(
+			'erm_performance_section',
+			__('Ottimizzazione Performance', 'easy-restaurant-menu'),
+			[$this, 'performance_section_callback'],
+			'erm_settings_group'
+		);
+		
+		// Campo per attivare/disattivare l'ottimizzazione degli asset
+		add_settings_field(
+			'erm_enable_asset_optimization',
+			__('Ottimizzazione Asset', 'easy-restaurant-menu'),
+			[$this, 'asset_optimization_callback'],
+			'erm_settings_group',
+			'erm_performance_section'
+		);
+		
+		// Campo per attivare/disattivare il CSS critico inline
+		add_settings_field(
+			'erm_enable_critical_css',
+			__('CSS Critico Inline', 'easy-restaurant-menu'),
+			[$this, 'critical_css_callback'],
+			'erm_settings_group',
+			'erm_performance_section'
+		);
+		
+		// Campo per attivare/disattivare il caricamento condizionale
+		add_settings_field(
+			'erm_enable_conditional_loading',
+			__('Caricamento Condizionale', 'easy-restaurant-menu'),
+			[$this, 'conditional_loading_callback'],
+			'erm_settings_group',
+			'erm_performance_section'
+		);
 	}
 
 	/**
@@ -336,6 +403,130 @@ class Easy_Restaurant_Menu_Options {
 			86400 => __('1 giorno', 'easy-restaurant-menu'),
 			604800 => __('1 settimana', 'easy-restaurant-menu')
 		];
+	}
+
+	/**
+	 * Registra le opzioni per le ottimizzazioni delle performance
+	 * 
+	 * @since    1.0.0
+	 */
+	public function register_performance_options(): void {
+		// Opzioni per l'ottimizzazione delle performance
+		register_setting('erm_settings_group', 'erm_enable_asset_optimization', [
+			'type' => 'boolean',
+			'default' => true,
+			'sanitize_callback' => 'rest_sanitize_boolean'
+		]);
+		
+		register_setting('erm_settings_group', 'erm_enable_critical_css', [
+			'type' => 'boolean',
+			'default' => true,
+			'sanitize_callback' => 'rest_sanitize_boolean'
+		]);
+		
+		register_setting('erm_settings_group', 'erm_enable_conditional_loading', [
+			'type' => 'boolean',
+			'default' => true,
+			'sanitize_callback' => 'rest_sanitize_boolean'
+		]);
+		
+		// Aggiungi sezione per le impostazioni di ottimizzazione
+		add_settings_section(
+			'erm_performance_section',
+			__('Ottimizzazione Performance', 'easy-restaurant-menu'),
+			[$this, 'performance_section_callback'],
+			'erm_settings_group'
+		);
+		
+		// Campo per attivare/disattivare l'ottimizzazione degli asset
+		add_settings_field(
+			'erm_enable_asset_optimization',
+			__('Ottimizzazione Asset', 'easy-restaurant-menu'),
+			[$this, 'asset_optimization_callback'],
+			'erm_settings_group',
+			'erm_performance_section'
+		);
+		
+		// Campo per attivare/disattivare il CSS critico inline
+		add_settings_field(
+			'erm_enable_critical_css',
+			__('CSS Critico Inline', 'easy-restaurant-menu'),
+			[$this, 'critical_css_callback'],
+			'erm_settings_group',
+			'erm_performance_section'
+		);
+		
+		// Campo per attivare/disattivare il caricamento condizionale
+		add_settings_field(
+			'erm_enable_conditional_loading',
+			__('Caricamento Condizionale', 'easy-restaurant-menu'),
+			[$this, 'conditional_loading_callback'],
+			'erm_settings_group',
+			'erm_performance_section'
+		);
+	}
+	
+	/**
+	 * Callback per la sezione performance
+	 * 
+	 * @since    1.0.0
+	 */
+	public function performance_section_callback(): void {
+		echo '<p>' . __('Configura le impostazioni di ottimizzazione delle performance del plugin. Queste opzioni ti permettono di migliorare i tempi di caricamento del tuo sito.', 'easy-restaurant-menu') . '</p>';
+	}
+	
+	/**
+	 * Callback per l'opzione di ottimizzazione degli asset
+	 * 
+	 * @since    1.0.0
+	 */
+	public function asset_optimization_callback(): void {
+		$option = get_option('erm_enable_asset_optimization', true);
+		?>
+		<label>
+			<input type="checkbox" name="erm_enable_asset_optimization" value="1" <?php checked(1, $option); ?> />
+			<?php _e('Attiva l\'ottimizzazione degli asset (script e stili separati per funzionalità)', 'easy-restaurant-menu'); ?>
+		</label>
+		<p class="description">
+			<?php _e('Questa opzione divide gli script e gli stili in componenti più piccoli e specifici per caricare solo ciò che è necessario.', 'easy-restaurant-menu'); ?>
+		</p>
+		<?php
+	}
+	
+	/**
+	 * Callback per l'opzione CSS critico inline
+	 * 
+	 * @since    1.0.0
+	 */
+	public function critical_css_callback(): void {
+		$option = get_option('erm_enable_critical_css', true);
+		?>
+		<label>
+			<input type="checkbox" name="erm_enable_critical_css" value="1" <?php checked(1, $option); ?> />
+			<?php _e('Inserisci il CSS critico inline nell\'head della pagina', 'easy-restaurant-menu'); ?>
+		</label>
+		<p class="description">
+			<?php _e('Questa opzione inserisce gli stili critici necessari per il rendering iniziale direttamente nell\'head della pagina per evitare il FOUC (Flash of Unstyled Content).', 'easy-restaurant-menu'); ?>
+		</p>
+		<?php
+	}
+	
+	/**
+	 * Callback per l'opzione di caricamento condizionale
+	 * 
+	 * @since    1.0.0
+	 */
+	public function conditional_loading_callback(): void {
+		$option = get_option('erm_enable_conditional_loading', true);
+		?>
+		<label>
+			<input type="checkbox" name="erm_enable_conditional_loading" value="1" <?php checked(1, $option); ?> />
+			<?php _e('Carica gli asset solo nelle pagine che contengono menu', 'easy-restaurant-menu'); ?>
+		</label>
+		<p class="description">
+			<?php _e('Questa opzione carica gli script e gli stili solo nelle pagine che contengono blocchi o shortcode del menu ristorante.', 'easy-restaurant-menu'); ?>
+		</p>
+		<?php
 	}
 }
 

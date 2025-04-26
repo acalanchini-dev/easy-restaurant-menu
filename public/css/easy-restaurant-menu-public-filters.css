@@ -1,0 +1,83 @@
+/**
+ * Stili per i filtri del menu ristorante
+ * 
+ * Questo file contiene solo gli stili necessari per il sistema di filtri
+ * e viene caricato solo quando la funzionalità di filtro è attiva.
+ *
+ * @package    Easy_Restaurant_Menu
+ * @subpackage Easy_Restaurant_Menu/public
+ */
+
+.erm-filters-container {
+    margin-bottom: 2em;
+    padding: 1em 0;
+}
+
+.erm-filters-title {
+    margin-bottom: 1em;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.erm-filters-list {
+    display: flex;
+    flex-wrap: wrap;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.5em;
+}
+
+.erm-filter-item {
+    margin: 0;
+    padding: 0;
+}
+
+.erm-filter-button {
+    display: inline-block;
+    padding: 0.5em 1em;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    color: #333;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+}
+
+.erm-filter-button:hover {
+    background-color: #eee;
+}
+
+.erm-filter-button.active {
+    background-color: #333;
+    color: #fff;
+    border-color: #333;
+}
+
+.erm-menu-section.filtered {
+    display: none;
+}
+
+.erm-menu-section.filtered.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Stili responsive per i filtri */
+@media (max-width: 576px) {
+    .erm-filters-list {
+        flex-direction: column;
+        gap: 0.3em;
+    }
+    
+    .erm-filter-button {
+        width: 100%;
+        text-align: center;
+    }
+} 

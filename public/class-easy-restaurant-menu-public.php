@@ -19,49 +19,37 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Easy_Restaurant_Menu_Public {
 
 	/**
-	 * Register the stylesheets for the public-facing side of the site.
+	 * Registra ma non carica immediatamente gli stili per il frontend
 	 *
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles(): void {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run_plugin() function
-		 * defined in Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_style( "easy-restaurant-menu-public-stles", EASY_RESTAURANT_MENU_PLUGIN_URL . 'public/css/easy-restaurant-menu-public.css', array(), EASY_RESTAURANT_MENU_VERSION, 'all' );
-
+		// Non facciamo nulla qui, tutti gli stili vengono gestiti dalla classe Assets
+		// Per compatibilità con vecchie implementazioni, possiamo registrare lo stile ma non caricarlo
+		wp_register_style(
+			"easy-restaurant-menu-public", 
+			EASY_RESTAURANT_MENU_PLUGIN_URL . 'public/css/easy-restaurant-menu-public.css', 
+			array(), 
+			EASY_RESTAURANT_MENU_VERSION, 
+			'all'
+		);
 	}
 
 	/**
-	 * Register the JavaScript for the public-facing side of the site.
+	 * Registra ma non carica immediatamente gli script per il frontend
 	 *
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts(): void {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run_plugin() function
-		 * defined in Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_script( "easy-restaurant-menu-public-scripts", EASY_RESTAURANT_MENU_PLUGIN_URL . 'public/js/easy-restaurant-menu-public.js', array( 'jquery' ), EASY_RESTAURANT_MENU_VERSION, false );
-
+		// Non facciamo nulla qui, tutti gli script vengono gestiti dalla classe Assets
+		// Per compatibilità con vecchie implementazioni, possiamo registrare lo script ma non caricarlo
+		wp_register_script(
+			"easy-restaurant-menu-public", 
+			EASY_RESTAURANT_MENU_PLUGIN_URL . 'public/js/easy-restaurant-menu-public.js', 
+			array( 'jquery' ), 
+			EASY_RESTAURANT_MENU_VERSION, 
+			true
+		);
 	}
 
 	/**
@@ -76,10 +64,16 @@ class Easy_Restaurant_Menu_Public {
 	 * @since    1.0.0
 	 */
 	public function get_rendered_block(string $path, array $block_attributes = [], string $content = '', WP_Block $block = null) : string  {
+		// Assicuriamoci che la classe Assets sia caricata
+		if (!class_exists('EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Assets')) {
+			Easy_Restaurant_Menu_Helper::using('inc/class-easy-restaurant-menu-assets.php');
+		}
+		
+		// Notifica alla classe Assets che stiamo renderizzando un contenuto che richiede gli asset
+		Easy_Restaurant_Menu_Assets::set_has_menu_content($block_attributes);
 
 		//Return html output of the block
-		return Easy_Restaurant_Menu_Helper::return_view( $path,  $block_attributes, $content, $block );
-
+		return Easy_Restaurant_Menu_Helper::return_view( $path, $block_attributes, $content, $block );
 	}
 
 }

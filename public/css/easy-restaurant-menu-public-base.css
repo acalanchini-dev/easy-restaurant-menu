@@ -1,0 +1,98 @@
+/**
+ * Stili di base per il menu ristorante
+ * 
+ * Contiene solo gli stili essenziali per il layout e la struttura di base
+ * necessari per un rendering corretto anche prima del caricamento completo.
+ *
+ * @package    Easy_Restaurant_Menu
+ * @subpackage Easy_Restaurant_Menu/public
+ */
+
+/* Layout di base */
+.erm-menu-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.erm-menu-section {
+    margin-bottom: 2em;
+    padding: 1em 0;
+    position: relative;
+}
+
+.erm-section-title {
+    margin-bottom: 1em;
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid #eee;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.erm-menu-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.erm-menu-item {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 1.5em;
+    width: 100%;
+}
+
+.erm-item-image-container {
+    flex: 0 0 auto;
+    margin-right: 1em;
+    max-width: 100px;
+}
+
+.erm-item-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.erm-item-content {
+    flex: 1 1 auto;
+}
+
+.erm-item-title {
+    margin: 0 0 0.3em 0;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.erm-item-price {
+    font-weight: 600;
+    white-space: nowrap;
+    margin-left: 0.5em;
+}
+
+.erm-item-description {
+    margin: 0.5em 0 0 0;
+    line-height: 1.4;
+    font-size: 0.9em;
+    opacity: 0.85;
+}
+
+/* Media query responsive di base */
+@media (max-width: 768px) {
+    .erm-menu-item {
+        flex-direction: column;
+    }
+    
+    .erm-item-image-container {
+        margin-right: 0;
+        margin-bottom: 1em;
+        max-width: 100%;
+    }
+    
+    .erm-item-image {
+        max-width: 100%;
+    }
+} 

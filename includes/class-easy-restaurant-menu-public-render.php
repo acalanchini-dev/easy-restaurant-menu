@@ -30,11 +30,6 @@ class Easy_Restaurant_Menu_Public_Render {
         if (function_exists('add_action')) {
             add_action('init', array($this, 'register_restaurant_menu_block'));
         }
-        
-        // Registra lo shortcode se la funzione è disponibile
-        if (function_exists('add_shortcode')) {
-            $this->register_shortcode();
-        }
     }
 
     /**
@@ -117,6 +112,19 @@ class Easy_Restaurant_Menu_Public_Render {
             }
         }
         
+        // Carica la classe Assets se non lo è già
+        if (!class_exists('EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Assets')) {
+            if (function_exists('EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Helper::using')) {
+                EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Helper::using('inc/class-easy-restaurant-menu-assets.php');
+            } else {
+                // Fallback se la funzione di utilità non è disponibile
+                include_once dirname(dirname(__FILE__)) . '/inc/class-easy-restaurant-menu-assets.php';
+            }
+        }
+        
+        // Notifica alla classe Assets che stiamo renderizzando un menu
+        EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Assets::set_has_menu_content($attributes);
+        
         // Crea una chiave di cache basata sugli attributi
         $cache_key = 'render';
         
@@ -128,15 +136,6 @@ class Easy_Restaurant_Menu_Public_Render {
         }
         
         // Se non è in cache, procedi con il rendering
-        
-        // Carica gli script e i CSS necessari
-        if (function_exists('wp_enqueue_style')) {
-            wp_enqueue_style('easy-restaurant-menu-public');
-        }
-        
-        if (function_exists('wp_enqueue_script')) {
-            wp_enqueue_script('easy-restaurant-menu-public');
-        }
         
         // Recupera tutte le sezioni del menu dal database
         global $wpdb;
@@ -164,97 +163,5 @@ class Easy_Restaurant_Menu_Public_Render {
         EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Cache::set($cache_key, $html_output, $attributes);
         
         return $html_output;
-    }
-
-    /**
-     * Renderizza il menu ristorante tramite shortcode
-     *
-     * @since    1.0.0
-     * @param    array    $atts    Attributi dello shortcode.
-     * @return   string            HTML renderizzato.
-     */
-    public function render_restaurant_menu_shortcode($atts) {
-        // Imposta gli attributi predefiniti
-        $default_layout = 'list';
-        if (function_exists('get_option')) {
-            $default_layout = get_option('erm_default_layout', 'list');
-        }
-        
-        // Usa shortcode_atts con controllo di disponibilità
-        if (function_exists('shortcode_atts')) {
-            $attributes = shortcode_atts(array(
-                'layout' => $default_layout,
-                'show_images' => 'true',
-                'show_descriptions' => 'true',
-                'sections' => 'all',
-                'enable_filter' => 'false',
-                'enable_lazy_load' => 'true',
-                'primary_color' => '',
-                'secondary_color' => '',
-                'text_color' => '',
-                'price_color' => '',
-                'background_color' => ''
-            ), $atts);
-        } else {
-            // Fallback se shortcode_atts non è disponibile
-            $attributes = array(
-                'layout' => $default_layout,
-                'show_images' => 'true',
-                'show_descriptions' => 'true',
-                'sections' => 'all',
-                'enable_filter' => 'false',
-                'enable_lazy_load' => 'true',
-                'primary_color' => '',
-                'secondary_color' => '',
-                'text_color' => '',
-                'price_color' => '',
-                'background_color' => ''
-            );
-            
-            // Combina con gli attributi forniti
-            if (is_array($atts)) {
-                $attributes = array_merge($attributes, $atts);
-            }
-        }
-        
-        // Converti le stringhe booleane in booleani reali
-        $attributes['showImages'] = $attributes['show_images'] === 'true';
-        $attributes['showDescriptions'] = $attributes['show_descriptions'] === 'true';
-        $attributes['enableFilter'] = $attributes['enable_filter'] === 'true';
-        $attributes['enableLazyLoad'] = $attributes['enable_lazy_load'] === 'true';
-        
-        // Pulisci gli attributi
-        unset($attributes['show_images']);
-        unset($attributes['show_descriptions']);
-        unset($attributes['enable_filter']);
-        unset($attributes['enable_lazy_load']);
-        
-        // Assegna i colori
-        $attributes['primaryColor'] = $attributes['primary_color'];
-        $attributes['secondaryColor'] = $attributes['secondary_color'];
-        $attributes['textColor'] = $attributes['text_color'];
-        $attributes['priceColor'] = $attributes['price_color'];
-        $attributes['backgroundColor'] = $attributes['background_color'];
-        
-        // Pulisci gli attributi dei colori
-        unset($attributes['primary_color']);
-        unset($attributes['secondary_color']);
-        unset($attributes['text_color']);
-        unset($attributes['price_color']);
-        unset($attributes['background_color']);
-        
-        // Utilizza il metodo di rendering del blocco
-        return $this->render_restaurant_menu_block($attributes, '', null);
-    }
-
-    /**
-     * Registra lo shortcode per il menu ristorante
-     *
-     * @since    1.0.0
-     */
-    public function register_shortcode() {
-        if (function_exists('add_shortcode')) {
-            add_shortcode('restaurant_menu', array($this, 'render_restaurant_menu_shortcode'));
-        }
     }
 } 

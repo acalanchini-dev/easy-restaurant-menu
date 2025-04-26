@@ -112,10 +112,9 @@ Personalizza lo stile secondo le tue preferenze:
 
 ### Utilizzo avanzato
 
-1. **Shortcode**: Puoi utilizzare lo shortcode `[restaurant_menu id="X" section="Y"]` per inserire menu in qualsiasi posizione supportata
-2. **Template PHP**: Per gli sviluppatori di temi, è possibile utilizzare la funzione `erm_display_menu($args)` nei template
-3. **REST API**: Accedi ai dati dei menu tramite gli endpoint REST per integrazioni personalizzate
-4. **Hook e filtri**: Personalizza il comportamento del plugin utilizzando i numerosi hook disponibili
+1. **Template PHP**: Per gli sviluppatori di temi, è possibile utilizzare la funzione `erm_display_menu($args)` nei template
+2. **REST API**: Accedi ai dati dei menu tramite gli endpoint REST per integrazioni personalizzate
+3. **Hook e filtri**: Personalizza il comportamento del plugin utilizzando i numerosi hook disponibili
 
 ## Prestazioni e Ottimizzazioni
 

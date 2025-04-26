@@ -28,9 +28,27 @@ class Easy_Restaurant_Menu_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles(): void {
-
-		wp_enqueue_style( "easy-restaurant-menu-admin-styles", EASY_RESTAURANT_MENU_PLUGIN_URL . 'admin/css/easy-restaurant-menu-admin.css', array(), EASY_RESTAURANT_MENU_VERSION, 'all' );
-
+		// Ottieni la pagina corrente usando la funzione globale di WordPress
+		$screen = function_exists('get_current_screen') ? \get_current_screen() : null;
+		
+		// Carica gli stili solo nelle pagine del plugin o nell'editor quando necessario
+		if (!$screen) {
+			return;
+		}
+		
+		// Array delle pagine admin del plugin
+		$plugin_pages = [
+			'toplevel_page_erm-dashboard',
+			'menu-ristorante_page_erm-menus',
+			'menu-ristorante_page_erm-sections',
+			'menu-ristorante_page_erm-items',
+			'menu-ristorante_page_erm-options'
+		];
+		
+		// Carica gli stili solo nelle nostre pagine admin
+		if (in_array($screen->id, $plugin_pages)) {
+			wp_enqueue_style("easy-restaurant-menu-admin-styles", EASY_RESTAURANT_MENU_PLUGIN_URL . 'admin/css/easy-restaurant-menu-admin.css', array(), EASY_RESTAURANT_MENU_VERSION, 'all');
+		}
 	}
 
 	/**
@@ -39,9 +57,36 @@ class Easy_Restaurant_Menu_Admin {
 	 * @since    1.0.0
 	 */
 	public function editor_styles(): void {
-
-		add_editor_style( array( EASY_RESTAURANT_MENU_PLUGIN_URL . 'admin/css/easy-restaurant-menu-editor.css' ) );
-
+		// Ottieni la pagina corrente usando la funzione globale di WordPress
+		$screen = function_exists('get_current_screen') ? \get_current_screen() : null;
+		
+		// Carica gli stili solo nell'editor
+		if (!$screen || !$screen->is_block_editor) {
+			return;
+		}
+		
+		// Verifica se l'editor ha blocchi del nostro plugin
+		$has_restaurant_menu_block = false;
+		
+		// Se siamo nell'editor, controlliamo il contenuto del post
+		if (isset($GLOBALS['post'])) {
+			$post_content = $GLOBALS['post']->post_content;
+			
+			// Controlla se il post contiene un blocco del nostro plugin
+			if (function_exists('has_block') && has_block('easy-restaurant-menu/restaurant-menu', $GLOBALS['post'])) {
+				$has_restaurant_menu_block = true;
+			} elseif (strpos($post_content, '<!-- wp:easy-restaurant-menu/') !== false) {
+				$has_restaurant_menu_block = true;
+			}
+		}
+		
+		// Se non abbiamo blocchi, registriamo comunque gli stili ma non li carichiamo
+		if (!$has_restaurant_menu_block) {
+			wp_register_style("easy-restaurant-menu-editor", EASY_RESTAURANT_MENU_PLUGIN_URL . 'admin/css/easy-restaurant-menu-editor.css', array(), EASY_RESTAURANT_MENU_VERSION, 'all');
+		} else {
+			// Carica gli stili nell'editor
+			add_editor_style(array(EASY_RESTAURANT_MENU_PLUGIN_URL . 'admin/css/easy-restaurant-menu-editor.css'));
+		}
 	}
 
 	/**
@@ -50,25 +95,45 @@ class Easy_Restaurant_Menu_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts(): void {
-		// Assicurati che il media uploader di WordPress sia caricato
-		wp_enqueue_media();
-
-		wp_enqueue_script( "easy-restaurant-menu-admin-scripts", EASY_RESTAURANT_MENU_PLUGIN_URL . 'admin/js/easy-restaurant-menu-admin.js', array( 'jquery', 'jquery-ui-sortable' ), EASY_RESTAURANT_MENU_VERSION, false );
-
-		// Localizza script per AJAX
-		wp_localize_script(
-			'easy-restaurant-menu-admin-scripts',
-			'erm_admin',
-			array(
-				'ajax_url' => admin_url('admin-ajax.php'),
-				'nonce' => wp_create_nonce('erm_admin_nonce'),
-				'text' => array(
-					'select_image' => __('Seleziona o carica un\'immagine', 'easy-restaurant-menu'),
-					'use_image' => __('Usa questa immagine', 'easy-restaurant-menu'),
-					'media_library_unavailable' => __('Media Library non disponibile', 'easy-restaurant-menu')
+		// Ottieni la pagina corrente usando la funzione globale di WordPress
+		$screen = function_exists('get_current_screen') ? \get_current_screen() : null;
+		
+		// Carica gli script solo nelle pagine del plugin
+		if (!$screen) {
+			return;
+		}
+		
+		// Array delle pagine admin del plugin
+		$plugin_pages = [
+			'toplevel_page_erm-dashboard',
+			'menu-ristorante_page_erm-menus',
+			'menu-ristorante_page_erm-sections',
+			'menu-ristorante_page_erm-items',
+			'menu-ristorante_page_erm-options'
+		];
+		
+		// Carica gli script solo nelle nostre pagine admin
+		if (in_array($screen->id, $plugin_pages)) {
+			// Assicurati che il media uploader di WordPress sia caricato
+			wp_enqueue_media();
+			
+			wp_enqueue_script("easy-restaurant-menu-admin-scripts", EASY_RESTAURANT_MENU_PLUGIN_URL . 'admin/js/easy-restaurant-menu-admin.js', array('jquery', 'jquery-ui-sortable'), EASY_RESTAURANT_MENU_VERSION, true);
+			
+			// Localizza script per AJAX
+			wp_localize_script(
+				'easy-restaurant-menu-admin-scripts',
+				'erm_admin',
+				array(
+					'ajax_url' => admin_url('admin-ajax.php'),
+					'nonce' => wp_create_nonce('erm_admin_nonce'),
+					'text' => array(
+						'select_image' => __('Seleziona o carica un\'immagine', 'easy-restaurant-menu'),
+						'use_image' => __('Usa questa immagine', 'easy-restaurant-menu'),
+						'media_library_unavailable' => __('Media Library non disponibile', 'easy-restaurant-menu')
+					)
 				)
-			)
-		);
+			);
+		}
 	}
 
 	/**

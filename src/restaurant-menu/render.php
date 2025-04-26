@@ -274,6 +274,14 @@ $style = '';
 // Stile base per il layout
 if ($display_type === 'grid') {
     $style .= "
+
+    @media screen and (max-width: 480px) {
+     #{$block_id}.erm-menu-container.erm-display-grid .erm-menu-items {
+            display: grid;
+            grid-template-columns:  1fr !important;
+            gap: {$item_spacing}px;
+        }
+    }
         #{$block_id}.erm-menu-container.erm-display-grid .erm-menu-items {
             display: grid;
             grid-template-columns: repeat({$columns}, 1fr);

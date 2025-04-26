@@ -196,10 +196,6 @@ $recent_items = $wpdb->get_results(
                         <li><?php echo esc_html__('Configura le opzioni per scegliere quali sezioni mostrare', 'easy-restaurant-menu'); ?></li>
                         <li><?php echo esc_html__('Personalizza lo stile direttamente nell\'editor', 'easy-restaurant-menu'); ?></li>
                     </ol>
-                    <div class="erm-shortcode-info">
-                        <p><?php echo esc_html__('Puoi anche usare lo shortcode:', 'easy-restaurant-menu'); ?></p>
-                        <code>[restaurant_menu sections="all" layout="grid"]</code>
-                    </div>
                 </div>
             </div>
         </div>
@@ -365,19 +361,6 @@ $recent_items = $wpdb->get_results(
     border-top: 1px solid #f0f0f1;
     padding: 15px;
     text-align: right;
-}
-
-.erm-shortcode-info {
-    margin-top: 15px;
-    padding: 10px;
-    background: #f9f9f9;
-    border-left: 4px solid #2271b1;
-}
-
-.erm-shortcode-info code {
-    display: block;
-    margin-top: 5px;
-    padding: 10px;
 }
 
 @media screen and (max-width: 782px) {
