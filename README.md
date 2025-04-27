@@ -142,10 +142,18 @@ Il plugin è sviluppato utilizzando:
 
 Per gli sviluppatori che desiderano contribuire:
 
-1. Clona il repository
+1. Clona il repository da GitHub: [https://github.com/acalanchini-dev/easy-restaurant-menu](https://github.com/acalanchini-dev/easy-restaurant-menu)
 2. Installa le dipendenze: `npm i`
 3. Per lo sviluppo: `npm start`
 4. Per la build di produzione: `npm run build`
+
+## WordPress.org
+
+Il plugin è preparato per la pubblicazione sulla repository ufficiale di WordPress, con:
+- File readme.txt conforme agli standard
+- Supporto completo per le traduzioni
+- Struttura del codice conforme alle migliori pratiche di WordPress
+- Implementazione robusta per sicurezza e performance
 
 ## Licenza
 
@@ -153,7 +161,7 @@ Il plugin Easy Restaurant Menu è rilasciato sotto licenza GPL v2 o successiva.
 
 ## Crediti
 
-Sviluppato da [Il tuo nome]
+Sviluppato da [Alessio Calanchini](https://github.com/acalanchini-dev)
 
 Basato sul boilerplate creato da Kadim Gültekin
 * https://github.com/Arkenon

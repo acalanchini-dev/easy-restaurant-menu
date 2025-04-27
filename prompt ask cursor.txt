@@ -9,3 +9,21 @@ ora quando aggiungo il blocco nell'editor tra le opzioni del blocco cè la selez
 
 prompt  finale che non deve mancare:
 per favore scrivi un prompt dettagliato per l'agente AI per implemenare queste modifiche
+
+per favore scrivi un prompt dettagliato per l'agente AI per Ottimizzare il caricamento di JS/CSS.
+ non scrivere il codice ma solo cosa fare per implementare questa miglioria. nel prompt chiedi espicitamente di fare solo cio 
+che è richiesto e  di non cambiare nulla di cio che è stato implementato finora.
+
+
+il problema con le impostazioni di performance di Easy Restaurant Menu è stato risolto. 
+ora ho notato che quando salvo le impostazioni (di qualsiasi tipo non solo di performance) quando 
+salvo la pagina viene refreshata nella tab "generale" anche se per esempio mi trovavo nella tab "stile". 
+le impostazioni vengono salvate correttamente ma vorrei che se modifico le impostazioni di "stile" quando 
+salvo la pagina deve rimanere nella tab "stile".per favore scrivi un prompt dettagliato per l'agente AI per
+risolvere il problema. non scrivere il codice ma solo cosa deve fare e dove deve intervenire l'agente AI per 
+risolvere il problema senza alterare il funzionamento del plugin
+
+vorrei implementare nel plugin la possibilita di renderizzare il menu tramite uno shortcode che permetta anche 
+di personalizzare il menu. per favore scrivi un prompt dettagliato per l'agente AI per implementare questa miglioria. 
+non scrivere il codice ma solo cosa deve fare e dove deve intervenire l'agente AI per implementare questa funzionalità 
+senza alterare il funzionamento del plugin

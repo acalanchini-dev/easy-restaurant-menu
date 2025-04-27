@@ -25,9 +25,9 @@ class Easy_Restaurant_Menu_I18n {
 	public function load_easy_restaurant_menu_textdomain(): void {
 
 		load_plugin_textdomain(
-			"easy-restaurant-menu",
+			'easy-restaurant-menu',
 			false,
-			EASY_RESTAURANT_MENU_PLUGIN_PATH . 'languages/'
+			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
 		);
 
 	}

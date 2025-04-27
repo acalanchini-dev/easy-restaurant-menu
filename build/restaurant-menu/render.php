@@ -280,12 +280,16 @@ if ($display_type === 'grid') {
             display: grid;
             grid-template-columns:  1fr !important;
             gap: {$item_spacing}px;
+            text-align:left;
+            
         }
     }
         #{$block_id}.erm-menu-container.erm-display-grid .erm-menu-items {
             display: grid;
             grid-template-columns: repeat({$columns}, 1fr);
             gap: {$item_spacing}px;
+            text-align:left;
+            
         }
     ";
 } else {
@@ -515,6 +519,7 @@ $style .= "
         display: flex;
         flex-direction: column;
         gap: {$item_spacing}px;
+        text-align:left;
     }
     
     #{$block_id}.erm-display-list .erm-menu-item {

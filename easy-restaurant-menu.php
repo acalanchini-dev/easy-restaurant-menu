@@ -1,12 +1,13 @@
 <?php
 /**
  * Plugin Name:       Easy Restaurant Menu
- * Plugin URI:        https://example.com/easy-restaurant-menu
+ * Plugin URI:        https://github.com/acalanchini-dev/easy-restaurant-menu
  * Description:       Un plugin semplice per creare e gestire menu di ristoranti con un blocco Gutenberg personalizzabile.
  * Requires at least: 5.9
  * Requires PHP:      7.0
  * Version:           1.0.0
- * Author:            Your Name
+ * Author:            Alessio Calanchini
+ * Author URI:        https://github.com/acalanchini-dev
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       easy-restaurant-menu
