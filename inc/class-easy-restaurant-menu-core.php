@@ -58,6 +58,9 @@ class Easy_Restaurant_Menu_Core extends Easy_Restaurant_Menu_Loader {
 		
 		//Load caching funzionality
 		$this->load_caching();
+		
+		//Load privacy functionality
+		$this->load_privacy();
 
 	}
 
@@ -84,6 +87,11 @@ class Easy_Restaurant_Menu_Core extends Easy_Restaurant_Menu_Loader {
 		 * La classe responsabile della gestione ottimizzata degli asset
 		 */
 		Easy_Restaurant_Menu_Helper::using('inc/class-easy-restaurant-menu-assets.php');
+		
+		/**
+		 * The class responsible for privacy functionality
+		 */
+		Easy_Restaurant_Menu_Helper::using('inc/class-easy-restaurant-menu-privacy.php');
 
 	}
 
@@ -301,6 +309,19 @@ class Easy_Restaurant_Menu_Core extends Easy_Restaurant_Menu_Loader {
 		if (class_exists('EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Cache')) {
 			Easy_Restaurant_Menu_Cache::delete_group('render');
 		}
+	}
+
+	/**
+	 * Load the privacy functionality.
+	 *
+	 * Initialize privacy policy content and data handlers.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function load_privacy(): void {
+		$plugin_privacy = new Easy_Restaurant_Menu_Privacy();
+		$plugin_privacy->initialize();
 	}
 
 	/**

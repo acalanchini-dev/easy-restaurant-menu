@@ -1,83 +1,87 @@
 === Easy Restaurant Menu ===
 Contributors: acalanchinidev
-Tags: restaurant, menu, food, gutenberg, blocks, restaurant-menu
+Tags: restaurant, menu, food, gutenberg, blocks
 Requires at least: 5.9
 Tested up to: 6.4
 Requires PHP: 7.0
 Stable tag: 1.0.0
-License: GPL-2.0-or-later
+License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Un plugin semplice per creare e gestire menu di ristoranti con un blocco Gutenberg personalizzabile.
+A simple plugin to create and manage restaurant menus with a customizable Gutenberg block.
 
 == Description ==
-Easy Restaurant Menu è un plugin WordPress che permette di creare sezioni di menu per ristoranti e di visualizzarle tramite un blocco Gutenberg completamente personalizzabile. Il plugin è progettato per essere semplice da usare ma potente nelle funzionalità.
+Easy Restaurant Menu is a WordPress plugin that allows you to create restaurant menu sections and display them through a fully customizable Gutenberg block. The plugin is designed to be simple to use yet powerful in functionality.
 
-**Caratteristiche**
+**Features**
 
-* Interfaccia amministrativa intuitiva per gestire sezioni e piatti
-* Blocco Gutenberg personalizzabile con numerose opzioni di stile
-* Supporto per immagini, prezzi e descrizioni per ogni elemento del menu
-* Possibilità di visualizzare il menu in formato griglia o lista
-* Personalizzazione completa dei colori, bordi, ombre e spaziature
-* Effetti hover per una migliore esperienza utente
-* Responsive design per una corretta visualizzazione su tutti i dispositivi
-* Sistema di caching avanzato tramite Transient API per prestazioni ottimali
-* Statistiche di cache e opzioni di configurazione personalizzabili
+* Intuitive admin interface for managing sections and dishes
+* Customizable Gutenberg block with numerous styling options
+* Support for images, prices, and descriptions for each menu item
+* Display menus in grid or list format
+* Full customization of colors, borders, shadows, and spacing
+* Hover effects for better user experience
+* Responsive design for proper display on all devices
+* Advanced caching system using Transient API for optimal performance
+* Cache statistics and customizable configuration options
 
-**Struttura dei menu**
+**Menu Structure**
 
-Il plugin organizza i menu di ristorante in tre livelli gerarchici:
-* **Menu**: contenitore principale che può raggruppare più sezioni
-* **Sezioni**: categorie all'interno di un menu (es. antipasti, primi, secondi)
-* **Piatti**: singoli elementi all'interno di una sezione
+The plugin organizes restaurant menus in three hierarchical levels:
+* **Menus**: main container that can group multiple sections
+* **Sections**: categories within a menu (e.g., appetizers, main courses)
+* **Items**: individual elements within a section
 
-**Ottimizzazioni incluse**
+**Optimizations Included**
 
-* Sistema di caching per migliorare le prestazioni
-* Caricamento condizionale degli asset
-* Gestione ottimizzata di CSS e JavaScript
-* Supporto per installazioni con volumi elevati di menu e articoli
+* Caching system to improve performance
+* Conditional loading of assets
+* Optimized CSS and JavaScript management
+* Support for installations with high volumes of menus and items
+
+**Privacy & Data Management**
+
+This plugin does not collect any personal data from visitors to your site. All menu data is stored in your WordPress database. There is no external API communication for the core functionality, and no user tracking is implemented.
 
 == Installation ==
-1. Carica la cartella `easy-restaurant-menu` nella directory `/wp-content/plugins/`
-2. Attiva il plugin dal menu 'Plugin' in WordPress
-3. Vai a "Menu Ristorante" nel pannello admin per iniziare a creare le tue sezioni di menu e i piatti
-4. Per visualizzare il menu nel tuo sito, aggiungi il blocco "Menu Ristorante" in una pagina o articolo
+1. Upload the `easy-restaurant-menu` folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to "Restaurant Menu" in the admin panel to start creating your menu sections and dishes
+4. To display the menu on your site, add the "Restaurant Menu" block to a page or post
 
 == Frequently Asked Questions ==
-= Come posso creare un nuovo menu? =
-Dal pannello amministrativo, vai su "Menu Ristorante" → "Menu" e clicca su "Aggiungi nuovo menu".
+= How do I create a new menu? =
+From the admin panel, go to "Restaurant Menu" → "Menus" and click on "Add new menu".
 
-= Come posso visualizzare il menu sul mio sito? =
-Aggiungi il blocco "Menu Ristorante" in qualsiasi pagina o articolo usando l'editor Gutenberg.
+= How do I display the menu on my site? =
+Add the "Restaurant Menu" block to any page or post using the Gutenberg editor.
 
-= È possibile avere più di un menu? =
-Sì, puoi creare più menu (es. pranzo, cena, dessert) e scegliere quale visualizzare nel blocco.
+= Can I have more than one menu? =
+Yes, you can create multiple menus (e.g., lunch, dinner, desserts) and choose which one to display in the block.
 
-= Il plugin è compatibile con il mio tema? =
-Il plugin è progettato per funzionare con qualsiasi tema compatibile con WordPress 5.9 o superiore.
+= Is the plugin compatible with my theme? =
+The plugin is designed to work with any theme compatible with WordPress 5.9 or higher.
 
-= Posso personalizzare i colori e lo stile del menu? =
-Sì, il blocco Gutenberg offre numerose opzioni di personalizzazione per adattarlo al design del tuo sito.
+= Can I customize the colors and style of the menu? =
+Yes, the Gutenberg block offers numerous customization options to adapt it to your site's design.
 
 == Screenshots ==
-1. Pannello di amministrazione del menu
-2. Creazione e modifica di sezioni del menu
-3. Gestione degli elementi del menu
-4. Blocco Gutenberg con opzioni di personalizzazione
-5. Esempio di menu in formato griglia nel frontend
-6. Esempio di menu in formato lista nel frontend
+1. Menu administration panel
+2. Creating and editing menu sections
+3. Managing menu items
+4. Gutenberg block with customization options
+5. Example of menu in grid format on the frontend
+6. Example of menu in list format on the frontend
 
 == Changelog ==
 = 1.0.0 =
-* Versione iniziale
-* Introduzione del blocco Gutenberg personalizzabile
-* Sistema di gestione menu, sezioni e piatti
-* Sistema di caching per ottimizzare le prestazioni
-* Supporto per visualizzazione in griglia e lista
-* Opzioni di personalizzazione dello stile
+* Initial version
+* Introduction of the customizable Gutenberg block
+* Menu, section and dish management system
+* Caching system to optimize performance
+* Support for grid and list display
+* Style customization options
 
 == Upgrade Notice ==
 = 1.0.0 =
-Prima versione pubblica del plugin. 
+First public version of the plugin. 

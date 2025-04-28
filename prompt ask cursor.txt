@@ -27,3 +27,65 @@ vorrei implementare nel plugin la possibilita di renderizzare il menu tramite un
 di personalizzare il menu. per favore scrivi un prompt dettagliato per l'agente AI per implementare questa miglioria. 
 non scrivere il codice ma solo cosa deve fare e dove deve intervenire l'agente AI per implementare questa funzionalità 
 senza alterare il funzionamento del plugin
+
+
+Ecco un prompt dettagliato che puoi fornire a un agente AI per rendere il tuo plugin conforme alle regole della repository ufficiale di WordPress:
+
+---
+
+**Prompt per l'agente AI:**
+
+Sto sviluppando un plugin WordPress che si chiama "Easy Restaurant Menu". Voglio pubblicarlo sulla repository ufficiale di WordPress. Il codice attuale è già funzionante, ma prima della pubblicazione voglio assicurarmi che sia pienamente conforme a tutte le linee guida e best practice richieste dal team di WordPress.org.
+
+**Ecco cosa ti chiedo di fare:**
+
+1. **Revisione delle regole di WordPress.org**
+   - Analizza le [linee guida ufficiali per i plugin WordPress](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/).
+   - Assicurati che il plugin non violi nessuna delle regole, in particolare su sicurezza, privacy, licenza, naming, e uso di funzioni WordPress core.
+
+2. **Sicurezza**
+   - Controlla che tutte le operazioni su input/output siano correttamente sanificate ed escaperate.
+   - Verifica che non ci siano vulnerabilità XSS, CSRF, SQL Injection o privilege escalation.
+   - Assicurati che tutte le chiamate REST e AJAX abbiano controlli di permessi adeguati.
+
+3. **Internazionalizzazione**
+   - Assicurati che tutte le stringhe siano localizzate tramite le funzioni `__()`, `_e()`, `_x()`, ecc.
+   - Verifica che il dominio di testo sia coerente e che sia presente il file `.pot` per le traduzioni.
+
+4. **Licenza**
+   - Controlla che tutto il codice sia compatibile con la GPLv2 o superiore.
+   - Verifica che eventuali librerie di terze parti siano anch’esse compatibili e correttamente accreditate.
+
+5. **File e struttura**
+   - Assicurati che la struttura delle cartelle e dei file sia conforme agli standard (ad esempio, presenza di file come `readme.txt`, `uninstall.php` se necessario, ecc.).
+   - Prepara un file `readme.txt` secondo il [modello ufficiale](https://developer.wordpress.org/plugins/wordpress-org/how-your-readme-txt-works/), con tutte le sezioni richieste (Description, Installation, FAQ, Changelog, ecc.).
+
+6. **Pulizia del codice**
+   - Rimuovi codice morto, commenti inutili, debug, var_dump, print_r, ecc.
+   - Assicurati che non ci siano riferimenti a URL personali, credenziali, o dati sensibili.
+
+7. **Compatibilità**
+   - Verifica la compatibilità con l’ultima versione stabile di WordPress.
+   - Assicurati che il plugin non causi errori fatali se attivato/disattivato o se mancano dipendenze.
+
+8. **Uninstall**
+   - Se il plugin crea tabelle o opzioni nel database, assicurati che vengano rimossi correttamente tramite un file `uninstall.php`.
+
+9. **Altri controlli**
+   - Assicurati che il plugin non invii dati a server esterni senza consenso esplicito dell’utente.
+   - Verifica che non ci siano funzioni di auto-aggiornamento o download di codice da fonti esterne.
+
+**Output atteso:**
+- Un elenco dettagliato delle modifiche da apportare per la conformità, con riferimenti alle linee guida violate o migliorabili.
+- Suggerimenti pratici e, dove possibile, snippet di codice per correggere eventuali problemi.
+- Un piano d’azione per la pubblicazione, inclusi i file da aggiungere/modificare e i test da eseguire prima dell’invio.
+
+---
+
+**Nota:**  
+Se vuoi, puoi anche chiedere all’agente AI di eseguire una revisione automatica del codice (linting, PHP_CodeSniffer con lo standard WordPress, ecc.) e di generare direttamente i file mancanti come `readme.txt` o `uninstall.php`.
+
+Se hai bisogno di un esempio pratico di `readme.txt` o di un file `uninstall.php`, fammi sapere!
+
+
+npm run plugin-zip

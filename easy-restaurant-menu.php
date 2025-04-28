@@ -2,13 +2,13 @@
 /**
  * Plugin Name:       Easy Restaurant Menu
  * Plugin URI:        https://github.com/acalanchini-dev/easy-restaurant-menu
- * Description:       Un plugin semplice per creare e gestire menu di ristoranti con un blocco Gutenberg personalizzabile.
+ * Description:       A simple plugin to create and manage restaurant menus with a customizable Gutenberg block.
  * Requires at least: 5.9
  * Requires PHP:      7.0
  * Version:           1.0.0
  * Author:            Alessio Calanchini
  * Author URI:        https://github.com/acalanchini-dev
- * License:           GPL-2.0-or-later
+ * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       easy-restaurant-menu
  * Domain Path:       /languages
@@ -22,6 +22,34 @@ use EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Activator;
 use EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Deactivator;
 use EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Core;
 use EASY_RESTAURANT_MENU\Easy_Restaurant_Menu_Helper;
+
+// Check WordPress version
+if ( version_compare( $GLOBALS['wp_version'], '5.9', '<' ) ) {
+    add_action( 'admin_notices', function() {
+        echo '<div class="error"><p>';
+        echo sprintf(
+            /* translators: %s: WordPress version */
+            esc_html__( 'Easy Restaurant Menu requires WordPress version %s or higher. Please upgrade WordPress and try again.', 'easy-restaurant-menu' ),
+            '5.9'
+        );
+        echo '</p></div>';
+    });
+    return;
+}
+
+// Check PHP version
+if ( version_compare( PHP_VERSION, '7.0', '<' ) ) {
+    add_action( 'admin_notices', function() {
+        echo '<div class="error"><p>';
+        echo sprintf(
+            /* translators: %s: PHP version */
+            esc_html__( 'Easy Restaurant Menu requires PHP version %s or higher. Please upgrade PHP and try again.', 'easy-restaurant-menu' ),
+            '7.0'
+        );
+        echo '</p></div>';
+    });
+    return;
+}
 
 // Define constants
 $plugin_data = get_file_data( __FILE__, array( 'version' => 'Version' ) );
