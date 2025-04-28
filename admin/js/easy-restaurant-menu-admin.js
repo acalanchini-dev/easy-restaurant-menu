@@ -150,11 +150,64 @@
     }
 
     /**
+     * Gestione della duplicazione degli elementi
+     */
+    function initDuplication() {
+        $(document).on('click', '.erm-duplicate-item', function() {
+            const itemId = $(this).data('id');
+            
+            if (!itemId) {
+                showNotice('error', 'ID elemento non valido');
+                return;
+            }
+            
+            // Mostra un messaggio di conferma
+            if (!confirm('Sei sicuro di voler duplicare questo elemento?')) {
+                return;
+            }
+            
+            // Effettua la richiesta AJAX per duplicare l'elemento
+            $.ajax({
+                url: erm_admin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'erm_duplicate_item',
+                    id: itemId,
+                    nonce: erm_admin.nonce
+                },
+                beforeSend: function() {
+                    // Disabilita il pulsante durante la richiesta
+                    $(this).prop('disabled', true);
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showNotice('success', response.data.message);
+                        // Ricarica la pagina per mostrare il nuovo elemento duplicato
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        showNotice('error', response.data.message);
+                    }
+                },
+                error: function() {
+                    showNotice('error', 'Errore durante la duplicazione dell\'elemento');
+                },
+                complete: function() {
+                    // Riabilita il pulsante
+                    $(this).prop('disabled', false);
+                }
+            });
+        });
+    }
+
+    /**
      * Inizializza l'applicazione
      */
     function init() {
         initMediaUploader();
         initSortable();
+        initDuplication();
         
         // Se WP non ha caricato il media uploader, disabilita i relativi bottoni
         if (typeof wp === 'undefined' || typeof wp.media === 'undefined') {

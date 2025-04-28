@@ -268,6 +268,7 @@ class Easy_Restaurant_Menu_Admin {
 		add_action('wp_ajax_erm_delete_item', [$this, 'ajax_delete_item']);
 		add_action('wp_ajax_erm_update_order', [$this, 'ajax_update_order']);
 		add_action('wp_ajax_erm_get_image', [$this, 'ajax_get_image']);
+		add_action('wp_ajax_erm_duplicate_item', [$this, 'ajax_duplicate_item']);
 	}
 	
 	/**
@@ -651,6 +652,66 @@ class Easy_Restaurant_Menu_Admin {
 			'url' => $image[0],
 			'width' => $image[1],
 			'height' => $image[2]
+		]);
+	}
+
+	/**
+	 * Duplica un elemento (AJAX)
+	 *
+	 * @since    1.0.0
+	 */
+	public function ajax_duplicate_item(): void {
+		// Controllo di sicurezza
+		check_ajax_referer('erm_admin_nonce', 'nonce');
+		
+		if (!current_user_can('manage_options')) {
+			wp_send_json_error(['message' => __('Permessi insufficienti', 'easy-restaurant-menu')]);
+			return;
+		}
+		
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'erm_items';
+		
+		$item_id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+		
+		if ($item_id <= 0) {
+			wp_send_json_error(['message' => __('ID elemento non valido', 'easy-restaurant-menu')]);
+			return;
+		}
+		
+		// Ottieni i dati dell'elemento da duplicare
+		$item = $wpdb->get_row(
+			$wpdb->prepare("SELECT * FROM $table_name WHERE id = %d", $item_id),
+			ARRAY_A
+		);
+		
+		if (!$item) {
+			wp_send_json_error(['message' => __('Elemento non trovato', 'easy-restaurant-menu')]);
+			return;
+		}
+		
+		// Modifica il titolo per indicare che è una copia
+		$item['titolo'] = sprintf(__('%s (Copia)', 'easy-restaurant-menu'), $item['titolo']);
+		
+		// Imposta lo stato come bozza
+		$item['status'] = 'draft';
+		
+		// Rimuovi l'ID per crearne uno nuovo
+		unset($item['id']);
+		
+		// Inserisci il nuovo elemento
+		$result = $wpdb->insert($table_name, $item);
+		
+		if ($result === false) {
+			wp_send_json_error(['message' => __('Errore durante la duplicazione dell\'elemento', 'easy-restaurant-menu')]);
+			return;
+		}
+		
+		$new_item_id = $wpdb->insert_id;
+		
+		wp_send_json_success([
+			'id' => $new_item_id,
+			'message' => __('Elemento duplicato con successo', 'easy-restaurant-menu')
 		]);
 	}
 }

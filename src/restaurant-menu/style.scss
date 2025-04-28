@@ -239,7 +239,7 @@ $image-content-spacing: 15px;
             margin-bottom: 8px;
             
             .erm-item-title {
-                font-size: 1.2em;
+                font-size: var(--erm-title-font-size, 1.2em);
                 font-weight: 600;
                 margin: 0;
                 padding: 0;
@@ -253,12 +253,12 @@ $image-content-spacing: 15px;
                 color: $price-color;
                 white-space: nowrap;
                 margin-left: 30px; // Aumentato da 15px a 30px per migliorare la separazione
-                font-size: 1.05em;
+                font-size: var(--erm-price-font-size, 1.05em);
             }
         }
         
         .erm-item-description {
-            font-size: 0.95em;
+            font-size: var(--erm-description-font-size, 0.95em);
             color: $text-secondary;
             line-height: 1.6;
             // Margini base che possono essere sovrascritti

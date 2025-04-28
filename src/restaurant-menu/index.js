@@ -466,6 +466,15 @@ registerBlockType(metadata.name, {
                             onChange={(value) => setAttributes({ titleColor: value })}
                         />
                         
+                        <RangeControl
+                            label={__('Dimensione titoli elementi (px)', 'easy-restaurant-menu')}
+                            value={attributes.titleFontSize}
+                            onChange={(value) => setAttributes({ titleFontSize: value })}
+                            min={12}
+                            max={36}
+                            step={1}
+                        />
+                        
                         <p>{__('Colore titoli sezioni', 'easy-restaurant-menu')}</p>
                         <ColorPalette
                             value={attributes.sectionTitleColor}
@@ -484,10 +493,28 @@ registerBlockType(metadata.name, {
                             onChange={(value) => setAttributes({ priceColor: value })}
                         />
                         
+                        <RangeControl
+                            label={__('Dimensione prezzi (px)', 'easy-restaurant-menu')}
+                            value={attributes.priceFontSize}
+                            onChange={(value) => setAttributes({ priceFontSize: value })}
+                            min={12}
+                            max={36}
+                            step={1}
+                        />
+                        
                         <p>{__('Colore descrizioni', 'easy-restaurant-menu')}</p>
                         <ColorPalette
                             value={attributes.descriptionColor}
                             onChange={(value) => setAttributes({ descriptionColor: value })}
+                        />
+                        
+                        <RangeControl
+                            label={__('Dimensione descrizioni (px)', 'easy-restaurant-menu')}
+                            value={attributes.descriptionFontSize}
+                            onChange={(value) => setAttributes({ descriptionFontSize: value })}
+                            min={10}
+                            max={24}
+                            step={1}
                         />
                         
                         <p>{__('Colore sfondo elementi', 'easy-restaurant-menu')}</p>
@@ -751,6 +778,19 @@ registerBlockType(metadata.name, {
                         </div>
                     ) : (
                         <div className="erm-editor-preview">
+                            <style>
+                                {`
+                                .erm-item-title {
+                                    font-size: ${attributes.titleFontSize}px !important;
+                                }
+                                .erm-item-price {
+                                    font-size: ${attributes.priceFontSize}px !important;
+                                }
+                                .erm-item-description {
+                                    font-size: ${attributes.descriptionFontSize}px !important;
+                                }
+                                `}
+                            </style>
                             <ServerSideRender
                                 block="easy-restaurant-menu/restaurant-menu"
                                 attributes={attributes}

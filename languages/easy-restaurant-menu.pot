@@ -88,4 +88,31 @@ msgstr ""
 
 #: inc/class-easy-restaurant-menu-blocks.php:36
 msgid "Visualizza un menu ristorante personalizzato"
+msgstr ""
+
+msgid "Elemento creato con successo"
+msgstr ""
+
+msgid "Duplica"
+msgstr ""
+
+msgid "Elemento duplicato con successo"
+msgstr ""
+
+msgid "%s (Copia)"
+msgstr ""
+
+msgid "Errore durante la duplicazione dell'elemento"
+msgstr ""
+
+msgid "Elemento eliminato con successo"
+msgstr ""
+
+msgid "Dimensione titoli elementi (px)"
+msgstr ""
+
+msgid "Dimensione prezzi (px)"
+msgstr ""
+
+msgid "Dimensione descrizioni (px)"
 msgstr "" 

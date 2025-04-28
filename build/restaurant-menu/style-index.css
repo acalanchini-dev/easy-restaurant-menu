@@ -177,7 +177,7 @@
   margin-bottom: 8px;
 }
 .wp-block-easy-restaurant-menu-restaurant-menu .erm-menu-item .erm-item-header .erm-item-title {
-  font-size: 1.2em;
+  font-size: var(--erm-title-font-size, 1.2em);
   font-weight: 600;
   margin: 0;
   padding: 0;
@@ -190,10 +190,10 @@
   color: #2e7d32;
   white-space: nowrap;
   margin-left: 30px;
-  font-size: 1.05em;
+  font-size: var(--erm-price-font-size, 1.05em);
 }
 .wp-block-easy-restaurant-menu-restaurant-menu .erm-menu-item .erm-item-description {
-  font-size: 0.95em;
+  font-size: var(--erm-description-font-size, 0.95em);
   color: #6b7280;
   line-height: 1.6;
   margin: 0.6em 0 0 0;

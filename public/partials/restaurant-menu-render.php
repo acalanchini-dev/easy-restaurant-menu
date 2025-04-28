@@ -224,7 +224,7 @@ ob_start();
                     
                     <?php if ($show_descriptions && !empty($item['descrizione'])): ?>
                         <p class="erm-item-description" style="<?php echo esc_attr($description_style); ?>">
-                            <?php echo esc_html($item['descrizione']); ?>
+                            <?php echo wp_kses_post(nl2br($item['descrizione'])); ?>
                         </p>
                     <?php endif; ?>
                 </div>

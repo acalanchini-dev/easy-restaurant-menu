@@ -213,6 +213,18 @@
     "hoverEffect": {
       "type": "string",
       "default": "none"
+    },
+    "titleFontSize": {
+      "type": "number",
+      "default": 16
+    },
+    "descriptionFontSize": {
+      "type": "number",
+      "default": 14
+    },
+    "priceFontSize": {
+      "type": "number",
+      "default": 16
     }
   },
   "textdomain": "easy-restaurant-menu",

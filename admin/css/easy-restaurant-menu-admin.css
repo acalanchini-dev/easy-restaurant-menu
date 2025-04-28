@@ -157,6 +157,24 @@
     color: #666;
 }
 
+.erm-item-footer {
+    padding: 10px 15px;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.erm-duplicate-item {
+    background-color: #f8f8f8;
+    color: #555;
+    border-color: #ccc;
+}
+
+.erm-duplicate-item:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
 .erm-menu-details, .erm-section-details, .erm-item-details {
     padding: 15px;
 }

@@ -156,6 +156,9 @@ $image_square               = $attributes['imageSquare'] ?? true;
 $list_image_alignment       = $attributes['listImageAlignment'] ?? 'center';
 $class_name                 = $attributes['className'] ?? '';
 $align                      = $attributes['align'] ?? '';
+$title_font_size            = $attributes['titleFontSize'] ?? 16;
+$description_font_size      = $attributes['descriptionFontSize'] ?? 14;
+$price_font_size            = $attributes['priceFontSize'] ?? 16;
 
 // Attributi di spaziatura
 $image_margin         = $attributes['imageMargin'] ?? ['top' => 0, 'right' => 0, 'bottom' => 0, 'left' => 0];
@@ -457,20 +460,21 @@ $style .= "
     
     #{$block_id} .erm-item-title {
         font-weight: 600;
-        font-size: 1.25em;
+        font-size: {$title_font_size}px !important;
         line-height: 1.3;
         margin: 0;
+        max-width:220px
     }
     
     #{$block_id} .erm-item-price {
         font-weight: 700;
         white-space: nowrap;
-        font-size: 1.1em;
+        font-size: {$price_font_size}px !important;
         margin-left: 1.5em;
     }
     
     #{$block_id} .erm-item-description {
-        font-size: 0.95em;
+        font-size: {$description_font_size}px !important;
         line-height: 1.6;
     }
     
@@ -684,7 +688,7 @@ if ($show_all_sections || empty($section_id)) {
             
             // Descrizione della sezione
             if ($show_section_descriptions && !empty($current_section->descrizione)) {
-                $output .= '<div class="erm-section-description" style="text-align: ' . esc_attr($section_description_alignment) . ';">' . wp_kses_post($current_section->descrizione) . '</div>';
+                $output .= '<div class="erm-section-description" style="text-align: ' . esc_attr($section_description_alignment) . ';">' . wp_kses_post(nl2br($current_section->descrizione)) . '</div>';
             }
             
             // Recupera gli elementi per questa sezione
@@ -747,7 +751,7 @@ if ($show_all_sections || empty($section_id)) {
                     
                     // Descrizione dell'elemento
                     if ($show_descriptions && !empty($item->descrizione)) {
-                        $output .= '<div class="erm-item-description">' . wp_kses_post($item->descrizione) . '</div>';
+                        $output .= '<div class="erm-item-description">' . wp_kses_post(nl2br($item->descrizione)) . '</div>';
                     }
                     
                     $output .= '</div>'; // Fine content
@@ -792,7 +796,7 @@ if ($show_all_sections || empty($section_id)) {
         
         // Descrizione della sezione
         if ($show_section_descriptions && !empty($section->descrizione)) {
-            $output .= '<div class="erm-section-description" style="text-align: ' . esc_attr($section_description_alignment) . ';">' . wp_kses_post($section->descrizione) . '</div>';
+            $output .= '<div class="erm-section-description" style="text-align: ' . esc_attr($section_description_alignment) . ';">' . wp_kses_post(nl2br($section->descrizione)) . '</div>';
         }
         
         // Recupera gli elementi per questa sezione
@@ -855,7 +859,7 @@ if ($show_all_sections || empty($section_id)) {
                 
                 // Descrizione dell'elemento
                 if ($show_descriptions && !empty($item->descrizione)) {
-                    $output .= '<div class="erm-item-description">' . wp_kses_post($item->descrizione) . '</div>';
+                    $output .= '<div class="erm-item-description">' . wp_kses_post(nl2br($item->descrizione)) . '</div>';
                 }
                 
                 $output .= '</div>'; // Fine content

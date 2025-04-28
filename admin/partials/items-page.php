@@ -240,7 +240,7 @@ if ($current_section_id > 0) {
                                         
                                         <div class="erm-item-details">
                                             <?php if (!empty($item['descrizione'])) : ?>
-                                                <p class="erm-item-description"><?php echo esc_html($item['descrizione']); ?></p>
+                                                <p class="erm-item-description"><?php echo wp_kses_post(nl2br($item['descrizione'])); ?></p>
                                             <?php endif; ?>
                                             
                                             <div class="erm-item-meta">
@@ -259,6 +259,9 @@ if ($current_section_id > 0) {
                                         <span class="erm-data-immagine"><?php echo esc_attr($item['immagine']); ?></span>
                                         <span class="erm-data-ordine"><?php echo esc_attr($item['ordine']); ?></span>
                                         <span class="erm-data-status"><?php echo esc_attr($item['status']); ?></span>
+                                    </div>
+                                    <div class="erm-item-footer">
+                                        <button type="button" class="button erm-duplicate-item" data-id="<?php echo esc_attr($item['id']); ?>"><?php echo esc_html__('Duplica', 'easy-restaurant-menu'); ?></button>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
